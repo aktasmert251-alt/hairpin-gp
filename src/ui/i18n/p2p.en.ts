@@ -32,9 +32,10 @@ const en: DictOf<typeof tr> = {
   error: {
     empty: 'The code is empty.',
     tooLong: 'The code is too long.',
+    short: 'The code looks cut off. Copy the whole code and paste it (including the leading HP1I. or HP1A.).',
     notInvite: 'This is an answer code. Ask the host for an invite code.',
     notAnswer: 'This is an invite code. Paste the answer code your guest sent.',
-    corrupt: 'The code is damaged or was not copied completely.',
+    corrupt: 'The code is damaged or was not copied completely. Use the copy-code button and paste all of it; when copying from a chat, select the whole message.',
     wrongRoom: 'This answer belongs to another room.',
     wrongSlot: 'This answer belongs to another invite. Pick the right guest.',
     noRoom: 'The room is not ready yet. Wait a moment.',

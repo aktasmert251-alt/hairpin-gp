@@ -30,9 +30,10 @@ const tr = {
   error: {
     empty: 'Kod boş.',
     tooLong: 'Kod çok uzun.',
+    short: 'Kod yarım kalmış görünüyor. Kodun tamamını kopyalayıp yapıştır (başındaki HP1I. veya HP1A. dahil).',
     notInvite: 'Bu bir cevap kodu. Oda sahibinden davet kodu iste.',
     notAnswer: 'Bu bir davet kodu. Misafirin gönderdiği cevap kodunu yapıştır.',
-    corrupt: 'Kod bozuk ya da eksik kopyalanmış.',
+    corrupt: 'Kod bozuk ya da eksik kopyalanmış. Kodu "Kodu kopyala" düğmesiyle kopyala ve tamamını yapıştır; sohbetten kopyalıyorsan mesajın başından sonuna kadar seç.',
     wrongRoom: 'Bu cevap başka bir odaya ait.',
     wrongSlot: 'Bu cevap başka bir davete ait. Doğru misafiri seç.',
     noRoom: 'Oda henüz hazır değil. Biraz bekle.',

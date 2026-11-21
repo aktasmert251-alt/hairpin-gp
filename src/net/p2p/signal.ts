@@ -18,7 +18,7 @@ const DISPLAY_RE = new RegExp(`^[${ROOM_CODE_ALPHABET}]{${DISPLAY_CODE_LENGTH}}$
 export interface InviteCode { room: string; display: string; slot: number; sdp: string }
 export interface AnswerCode { display: string; slot: number; sdp: string }
 
-export type CodeError = 'empty' | 'tooLong' | 'notInvite' | 'notAnswer' | 'corrupt';
+export type CodeError = 'empty' | 'tooLong' | 'short' | 'notInvite' | 'notAnswer' | 'corrupt';
 
 export class SignalCodeError extends Error {
   constructor(readonly code: CodeError) {
@@ -70,15 +70,27 @@ async function pack(prefix: string, obj: object): Promise<string> {
   return prefix + b64url(await pipe(json, new CompressionStream('deflate')));
 }
 
-async function unpack(raw: string, prefix: string, other: string, wrong: CodeError): Promise<Record<string, unknown>> {
-  const text = raw.replace(/\s+/g, '');
-  if (!text) throw new SignalCodeError('empty');
-  if (text.length > MAX_CODE_CHARS) throw new SignalCodeError('tooLong');
-  if (text.startsWith(other)) throw new SignalCodeError(wrong);
-  if (!text.startsWith(prefix)) throw new SignalCodeError('corrupt');
+/**
+ * What chat apps and keyboards do to a pasted code: typographic look-alikes for '-' and '_', zero-width and non-breaking
+ * characters, line breaks. All of these are repaired before decoding.
+ */
+export function normalizeCode(raw: string): string {
+  return raw
+    .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, '-')
+    .replace(/[\uFF3F\u203F]/g, '_')
+    .replace(/[\u200B-\u200D\u2060\uFEFF\u00AD]/g, '')
+    .replace(/\s+/g, '');
+}
+
+/** Real codes are 500+ characters; anything shorter than this was cut off while copying. */
+const MIN_PAYLOAD_CHARS = 300;
+/** Longest run of prose that may follow a code in a pasted message ("... kodu yapıştır", names, times). */
+const MAX_TRAILING_JUNK = 160;
+
+async function decodePayload(payload: string): Promise<Record<string, unknown>> {
   let json: string;
   try {
-    json = new TextDecoder('utf-8', { fatal: true }).decode(await pipe(unb64url(text.slice(prefix.length)), new DecompressionStream('deflate')));
+    json = new TextDecoder('utf-8', { fatal: true }).decode(await pipe(unb64url(payload), new DecompressionStream('deflate')));
   } catch (e) {
     if (e instanceof SignalCodeError) throw e;
     throw new SignalCodeError('corrupt');
@@ -93,6 +105,32 @@ async function unpack(raw: string, prefix: string, other: string, wrong: CodeErr
   return obj as Record<string, unknown>;
 }
 
+async function unpack(raw: string, prefix: string, other: string, wrong: CodeError): Promise<Record<string, unknown>> {
+  const text = normalizeCode(raw);
+  if (!text) throw new SignalCodeError('empty');
+  // The code may sit inside a longer pasted message (sender name, time, instructions): start at its prefix.
+  const at = text.indexOf(prefix);
+  const atOther = text.indexOf(other);
+  if (at < 0) throw new SignalCodeError(atOther >= 0 ? wrong : 'corrupt');
+  if (atOther >= 0 && atOther < at) throw new SignalCodeError(wrong);
+  const run = /^[A-Za-z0-9_-]*/.exec(text.slice(at + prefix.length))![0];
+  if (run.length > MAX_CODE_CHARS) throw new SignalCodeError('tooLong');
+  // zlib carries a checksum, so only the exact payload decodes. Words glued to the end of the code in a chat message are
+  // cut off by trying shorter and shorter endings.
+  let last: unknown = new SignalCodeError('corrupt');
+  for (let cut = 0; cut <= Math.min(MAX_TRAILING_JUNK, run.length - 8); cut++) {
+    const payload = run.slice(0, run.length - cut);
+    if (payload.length % 4 === 1) continue;
+    try {
+      return await decodePayload(payload);
+    } catch (e) {
+      last = e;
+    }
+  }
+  // Nothing decoded: a very short remainder means the code was cut off while copying.
+  if (run.length < MIN_PAYLOAD_CHARS) throw new SignalCodeError('short');
+  throw last instanceof SignalCodeError ? last : new SignalCodeError('corrupt');
+}
 const validSdp = (d: unknown): d is string => typeof d === 'string' && d.length <= MAX_SDP_CHARS && d.startsWith('v=0');
 const validSlot = (s: unknown): s is number => typeof s === 'number' && Number.isInteger(s) && s >= 1 && s <= 99;
 
