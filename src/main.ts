@@ -78,7 +78,14 @@ function randomSeed(): number {
  * title, open the Online screen in join mode (see `navigate` below). The net module is fetched only when a link is present.
  */
 let inviteLinkPending = false;
+/** D-064 answer link (#answer=HP1A.…): this tab only hands the code to the room tab (src/ui/answerHandoff.ts). */
+let answerLinkCode: string | null = null;
 async function captureInviteLink(): Promise<void> {
+  if (/^#\s*answer(?:=|%3D)/i.test(window.location.hash)) {
+    answerLinkCode = (await import('./net/index')).parseAnswerHash(window.location.hash);
+    if (answerLinkCode) window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    return;
+  }
   if (!/^#\s*(?:join(?:=|%3D)|HP1I)/i.test(window.location.hash)) return;
   const mod = await import('./net/index');
   const code = mod.parseInviteHash(window.location.hash);
@@ -92,6 +99,12 @@ async function boot(): Promise<void> {
   await captureInviteLink();
   const services = createAppServices(apex, launch);
   const { bus, settings, i18n } = services;
+  if (answerLinkCode) {
+    const { runAnswerHandoff } = await import('./ui/answerHandoff');
+    await runAnswerHandoff(answerLinkCode, i18n.t);
+    apex.setReady(true);
+    return;
+  }
   const app = createAppStateMachine(bus);
   apex.attachApp({ state: () => app.current() });
 

@@ -81,3 +81,21 @@ describe('pending invite store', () => {
     expect(takePendingInvite()).toBe('HP1I.two');
   });
 });
+
+describe('answer links', () => {
+  it('round-trips an answer code through #answer= and rejects invites / junk', async () => {
+    const { buildAnswerLink, parseAnswerHash } = await import('../inviteLink');
+    const { encodeAnswer, encodeInvite } = await import('../signal');
+    const sdp = 'v=0\r\no=- 1 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\nm=application 9 UDP/DTLS/SCTP webrtc-datachannel\r\na=sctp-port:5000\r\n';
+    const ans = await encodeAnswer({ display: 'K7M2PQ', slot: 2, sdp });
+    const link = buildAnswerLink(ans, 'https://example.test/hairpin-gp/?x=1#old');
+    expect(link).toBe(`https://example.test/hairpin-gp/?x=1#answer=${ans}`);
+    expect(parseAnswerHash(new URL(link).hash)).toBe(ans);
+    expect(parseAnswerHash(`#answer=${encodeURIComponent(ans)}`)).toBe(ans);
+    expect(parseAnswerHash(`#answer=${ans}&utm=x`)).toBe(ans);
+    const inv = await encodeInvite({ room: 'ABCDE', display: 'K7M2PQ', slot: 2, sdp });
+    expect(parseAnswerHash(`#answer=${inv}`)).toBeNull();
+    expect(parseAnswerHash('#answer=hello')).toBeNull();
+    expect(parseAnswerHash('')).toBeNull();
+  });
+});

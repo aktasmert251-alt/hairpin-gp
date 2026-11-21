@@ -174,15 +174,22 @@ test('invite link: host sends a link, guest lands on Online with the invite fill
   const answer = await value(guest, '#online-answer');
   await guest.screenshot({ path: path.join(SHOTS3, 'guest-online-from-link-1920.png') });
 
-  // Guest "send with WhatsApp": the answer code on its own line.
+  // Guest "send with WhatsApp": an answer LINK (#answer=<code>), so nothing has to be pasted.
   const [popup2] = await Promise.all([guest.waitForEvent('popup'), guestUi.click('online.sendAnswer')]);
   const text2 = new URL(popup2.url()).searchParams.get('text') ?? '';
-  expect(text2.split('\n')).toEqual([expect.stringContaining('HAIRPIN GP'), answer]);
+  expect(text2).toContain('HAIRPIN GP');
+  const answerLink = /https?:\/\/\S+#answer=\S+/.exec(text2)?.[0] ?? '';
+  expect(answerLink).toContain(`#answer=${answer}`);
   await popup2.close();
 
-  // The host pastes the answer: connected, guest in the lobby.
-  await page.locator('#p2p-answer-in').fill(answer);
-  await hostUi.click('p2p.connect');
+  // The host taps the answer link in the browser that runs the room: the new tab hands the code to the room tab
+  // (BroadcastChannel), the slot connects and the guest lands in the lobby. Nothing is pasted.
+  const handoff = await page.context().newPage();
+  await handoff.goto(`/?p2pIce=none&mute=1#answer=${answer}`);
+  await expect(handoff.locator('.apx-handoff')).toContainText(/iletildi|reached the room tab/, { timeout: 15_000 });
+  expect(await handoff.evaluate(() => location.hash)).toBe('');
+  await handoff.screenshot({ path: path.join(SHOTS3, 'host-answer-link-handoff-1920.png') });
+  await handoff.close();
   await expect(page.locator('.m-p2p-slot.is-connected')).toHaveCount(1, { timeout: 20_000 });
   await guestUi.waitScreen('lobby', 20_000);
 

@@ -14,6 +14,7 @@ import {
 } from './model';
 import { answerKey, offerKey, relayCodeInput, relayGet, relayPut } from './relay';
 import { codeErrorOf, decodeAnswer, decodeInvite, encodeAnswer, encodeInvite, newDisplayCode } from './signal';
+import { P2P_HANDOFF_CHANNEL, type HandoffMsg } from './inviteLink';
 import { DeferredTransport, channelTransport, closedTransport, pipeTransports, portTransport, type Transport } from './transport';
 
 /** Same cap as the Node server's rooms (server/src/config.ts maxPlayersPerRoom). */
@@ -81,6 +82,8 @@ export function createP2PManager(): P2PManager {
   let statsTimer: ReturnType<typeof setInterval> | null = null;
   let onVisibility: (() => void) | null = null;
   let onPageHide: (() => void) | null = null;
+  /** Answer links opened in another tab of this browser hand their code over here (see inviteLink.ts). */
+  let handoff: BroadcastChannel | null = null;
   // ---- guest state ----
   let guestPc: RTCPeerConnection | null = null;
   let guestGame: RTCDataChannel | null = null;
@@ -157,6 +160,8 @@ export function createP2PManager(): P2PManager {
     if (onVisibility) document.removeEventListener('visibilitychange', onVisibility);
     if (onPageHide) window.removeEventListener('pagehide', onPageHide);
     onVisibility = onPageHide = null;
+    handoff?.close();
+    handoff = null;
     // Let the 'bye' leave before the channels close.
     setTimeout(() => {
       for (const n of toClose) dropSlot(n);
@@ -175,6 +180,29 @@ export function createP2PManager(): P2PManager {
       /* closed */
     }
     guestPc = null;
+  }
+
+  /** An answer link was opened in another tab: accept it for its slot (only the room it belongs to replies). */
+  async function onHandoff(m: HandoffMsg): Promise<void> {
+    if (!m || m.t !== 'answer' || typeof m.code !== 'string' || typeof m.id !== 'string' || !handoff) return;
+    const ch = handoff;
+    const reply = (ok: boolean, error: string | null): void => ch.postMessage({ t: 'ack', id: m.id, ok, error } satisfies HandoffMsg);
+    let a;
+    try {
+      a = await decodeAnswer(m.code);
+    } catch (e) {
+      reply(false, codeErrorOf(e));
+      return;
+    }
+    if (a.display !== store.get().display) return; // another room (another host tab): it answers
+    const slot = store.get().slots.find((x) => x.n === a.slot);
+    if (!slots.has(a.slot) || slot?.state !== 'waiting') {
+      reply(slot?.state === 'connecting' || slot?.state === 'connected', slot ? null : 'wrongSlot');
+      return;
+    }
+    await manager.acceptAnswer(a.slot, m.code);
+    const after = store.get().slots.find((x) => x.n === a.slot);
+    reply(after?.state === 'connecting' || after?.state === 'connected', after?.error ?? null);
   }
 
   const manager: P2PManager = {
@@ -197,6 +225,10 @@ export function createP2PManager(): P2PManager {
       };
       window.addEventListener('pagehide', onPageHide);
       statsTimer = setInterval(() => void sampleStats(), LINK_STATS_MS);
+      if (typeof BroadcastChannel !== 'undefined') {
+        handoff = new BroadcastChannel(P2P_HANDOFF_CHANNEL);
+        handoff.onmessage = (ev: MessageEvent) => void onHandoff(ev.data as HandoffMsg);
+      }
     },
 
     async newInvite() {

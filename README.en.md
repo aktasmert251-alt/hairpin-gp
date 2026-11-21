@@ -39,8 +39,8 @@ Keys and gamepad bindings can be changed in **Settings > Controls**. On a phone,
 ## Online rooms
 
 1. Room host: **Online → Host a room → Guests → New invite code**, then tap **Send with WhatsApp** (the invite goes out as a tappable link).
-2. Guest: taps the link; the game opens with the invite already filled in. After typing a nickname the answer code is made automatically; **Send with WhatsApp** returns it to the host.
-3. The host pastes the answer code and the connection is made.
+2. Guest: taps the link; the game opens with the invite already filled in. After typing a nickname the answer is made automatically; **Send with WhatsApp** returns it to the host as a link.
+3. The host taps the answer link **in the browser where the room is open**; the answer reaches the room tab by itself and the connection is made. Nothing is pasted.
 
 You can also copy and paste the invite and answer codes instead of using the link.
 

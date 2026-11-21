@@ -8,7 +8,7 @@ import { bottomBar, header, langIndicator, ListScreen } from './base';
 import type { ScreenCtx } from './ctx';
 import { clampRoomSettings, codeInput, onlineIdentity, validCode, validServer } from './onlineLogic';
 import { MOBILE_AI } from './raceSetup';
-import { MAX_CODE_CHARS, codeDiag, P2P_GUEST_URL, P2P_HOST_URL, p2p, takePendingInvite, whatsAppUrl } from '../../net/index';
+import { MAX_CODE_CHARS, buildAnswerLink, codeDiag, P2P_GUEST_URL, P2P_HOST_URL, p2p, takePendingInvite, whatsAppUrl } from '../../net/index';
 
 /** D-064: how this player goes online: the game server, hosting a room in this tab, or joining a host's room by invite code. */
 type ConnMode = 'server' | 'host' | 'join';
@@ -224,8 +224,7 @@ export class Online extends ListScreen {
       disabled: () => this.connMode !== 'join' || !p2p().store.get().guest.answer, activate: () => void this.copyAnswer() });
     const shareAnswer: Ctl[] = touchUi(ctx) && canShare() ? [button(ctx, this.answerWrap, { id: 'online.shareAnswer', label: () => ctx.t('touch.online.share'),
       disabled: () => this.connMode !== 'join' || !p2p().store.get().guest.answer,
-      activate: () => { const a = p2p().store.get().guest.answer; if (a) void shareText(`${ctx.t('p2p.whatsAppAnswer')}
-${a}`); } })] : [];
+      activate: () => { const a = p2p().store.get().guest.answer; if (a) void shareText(`${ctx.t('p2p.whatsAppAnswerLink', { link: buildAnswerLink(a) })}`); } })] : [];
     // One tap: the answer code on its own line in a message to the host (wa.me opens WhatsApp / WhatsApp Web with the text prefilled).
     const sendAnswer = button(ctx, this.answerWrap, { id: 'online.sendAnswer', label: () => ctx.t('p2p.sendWhatsApp'), primary: true,
       disabled: () => this.connMode !== 'join' || !p2p().store.get().guest.answer, activate: () => this.sendAnswerMessage() });
@@ -365,8 +364,7 @@ ${a}`); } })] : [];
   private sendAnswerMessage(): void {
     const code = p2p().store.get().guest.answer;
     if (!code) return;
-    window.open(whatsAppUrl(`${this.ctx.t('p2p.whatsAppAnswer')}
-${code}`), '_blank', 'noopener');
+    window.open(whatsAppUrl(`${this.ctx.t('p2p.whatsAppAnswerLink', { link: buildAnswerLink(code) })}`), '_blank', 'noopener');
   }
 
   private maybeAutoAnswer(): void {
