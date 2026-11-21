@@ -1,0 +1,20 @@
+Remaining literal old project name in src/public/root entry files. Comments and internal identifiers need no churn; CREDITS.md body is intentionally excluded (title-only rename requested). UI/Lead owners should update player-facing strings and coordinate the trailer/entry/package changes.
+
+src/audio/sandbox/audio.scene.ts:355: g.fillText('APEX GP · engine audio bench (V6 turbo hybrid)', 24, 40);
+src/core/i18n/errors.en.ts:5: noWebgl2: 'This browser does not support WebGL2. APEX GP needs an up-to-date Chrome, Edge or Firefox.',
+src/core/i18n/errors.tr.ts:4: noWebgl2: 'Bu tarayıcı WebGL2 desteklemiyor. APEX GP için güncel bir Chrome, Edge veya Firefox gerekir.',
+src/game/replay/codec.ts:29: if (b.byteLength < 8 || dv.getUint32(0, true) !== MAGIC) throw new Error('[replay] not an APEX GP replay');
+src/main.ts:1: // APEX GP entry (YÖN): boot -> title -> menu -> loading -> session -> results (§3.6).
+src/sandbox/router.ts:67: document.title = `APEX GP · ${scene.title}`;
+src/ui/dom.ts:92: /** The APEX GP wordmark (DESIGN §8.1), geometry verbatim. */
+src/ui/i18n/credits.en.ts:9: gameBody: 'APEX GP is a keyboard-driven browser racing game built with three.js and TypeScript by a team of AI agents.',
+src/ui/i18n/credits.tr.ts:6: gameBody: 'APEX GP; yapay zekâ ajanlarından oluşan bir ekibin three.js ve TypeScript ile yaptığı, klavyeyle oynanan bir tarayıcı yarış oyunudur.',
+src/ui/i18n/menu.en.ts:7: brand: 'APEX GP',
+src/ui/i18n/menu.tr.ts:5: brand: 'APEX GP',
+src/ui/screens/base.ts:49: const wm = wordmark('m-wm', 'APEX GP');
+src/ui/screens/pause.ts:40: const wm = wordmark('m-wm', 'APEX GP');
+src/ui/screens/title.ts:22: const wm = wordmark('m-title-wm', 'APEX GP');
+src/ui/screens/title.ts:34: const iwm = wordmark('m-intro-wm', 'APEX GP');
+index.html:7: <title>APEX GP</title>
+package.json:2: "name": "apex-gp",
+package.json:6: "description": "APEX GP: keyboard-only browser racing game (three.js)",

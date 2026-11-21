@@ -1,0 +1,29 @@
+/* D-060: stage geometry with readable CSS-pixel floors, native scrolling and no tab motion. */
+.m-about { position: absolute; inset: 150px 96px 100px; }
+.m-about-layout { position: absolute; inset: 100px 0 76px; display: grid; grid-template-columns: 416px minmax(0, 1fr); gap: 40px; }
+.m-about-tabs { display: flex; flex-direction: column; gap: 8px; }
+.m-about-tab { position: relative; min-height: 88px; padding: 20px 24px 20px 32px; font-size: max(24px, var(--m-text-min)); font-weight: 600; line-height: 1.2; border-bottom: 1px solid var(--apx-line) !important; }
+.m-about-tab[aria-selected="true"] { background: var(--apx-fg); color: var(--apx-on-fill); }
+.m-about-tab[aria-selected="true"]::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 10px; background: var(--apx-brand); transform: skewX(-12deg); }
+.m-about-panel { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 32px 40px; background: var(--apx-panel); border: 1px solid var(--apx-line); font-family: var(--font-text); font-size: max(21px, var(--m-text-min)); line-height: 1.5; color: var(--apx-fg-2); }
+.m-about-panel h2, .m-about-panel h3 { font-family: var(--font-cond); color: var(--apx-fg); line-height: 1.15; }
+.m-about-panel h2 { margin-bottom: 24px; }
+.m-about-panel h3 { font-size: max(26px, var(--m-text-min)); margin: 28px 0 10px; font-weight: 700; }
+.m-about-panel p + p { margin-top: 16px; }
+.m-about-panel ul { list-style: square; padding-left: 24px; }
+.m-about-panel li { padding-left: 8px; margin-bottom: 12px; }
+.m-about-panel a { display: block; width: fit-content; max-width: 100%; margin-top: 14px; color: var(--apx-fg); text-underline-offset: 4px; overflow-wrap: anywhere; }
+.m-about-panel .m-about-version { color: var(--apx-fg-3); margin-bottom: 22px; }
+.m-about-note { border-left: 3px solid var(--apx-brand); padding: 18px 24px; margin-top: 28px; background: var(--apx-ink-800); }
+.m-about-keys { overflow-wrap: anywhere; font-size: max(18px, var(--m-text-min)); }
+.m-about-help { position: absolute; bottom: 24px; left: 0; line-height: 1.4; color: var(--apx-fg-2); max-width: 1050px; }
+.m-about-back { padding: 12px 20px !important; border: 1px solid var(--apx-line-strong) !important; font-size: max(22px, var(--m-text-min)) !important; line-height: 1.2; }
+.m-about > .m-about-back { position: absolute; right: 0; bottom: 12px; }
+.m-about-delete { padding: 14px 22px !important; margin-top: 24px; background: var(--apx-fg) !important; color: var(--apx-on-fill) !important; font-size: max(22px, var(--m-text-min)) !important; font-weight: 600 !important; }
+.m-about-status { margin-top: 20px; color: var(--apx-fg); }
+.m-about-dialog { margin: auto; width: 760px; max-width: 90%; padding: 36px; background: var(--apx-ink-850); color: var(--apx-fg); border: 1px solid var(--apx-line-strong); border-top: 3px solid var(--apx-brand); }
+.m-about-dialog::backdrop { background: var(--apx-scrim); }
+.m-about-dialog p { margin-top: 20px; font: max(21px, var(--m-text-min)) / 1.5 var(--font-text); color: var(--apx-fg-2); }
+.m-about-actions { display: flex; justify-content: flex-end; gap: 24px; align-items: baseline; font-size: 24px; }
+.m-about button:focus-visible, .m-about a:focus-visible, .m-about-dialog button:focus-visible { outline: 2px solid var(--apx-brand); outline-offset: -4px; }
+.m-about button:active, .m-about-dialog button:active { opacity: .8; }

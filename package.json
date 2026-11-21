@@ -1,0 +1,41 @@
+{
+  "name": "apex-gp",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "description": "HAIRPIN GP: keyboard-only browser racing game (three.js)",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p server/tsconfig.json",
+    "server:build": "vite build --config server/vite.config.ts",
+    "server": "node server/dist/apex-server.mjs",
+    "server:tools": "vite build --config server/vite.tools.config.ts",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "shot": "node scripts/shot.mjs"
+  },
+  "dependencies": {
+    "gsap": "3.15.0",
+    "n8ao": "2.0.1",
+    "postprocessing": "6.39.5",
+    "three": "0.186.1",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.1",
+    "@types/three": "0.186.0",
+    "@types/ws": "^8.18.2",
+    "ffmpeg-static": "5.3.0",
+    "lil-gui": "0.21.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.2",
+    "vitest": "5.0.3"
+  }
+}

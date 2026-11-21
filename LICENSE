@@ -1,0 +1,15 @@
+Copyright (c) 2026 Mert Aktas. All rights reserved.
+
+HAIRPIN GP (source code, game data, track layouts, graphics, sounds and documentation
+authored for this project) is proprietary. You may play the game in the published
+builds and read the source code in this repository for personal, non-commercial
+evaluation. You may not copy, modify, redistribute, sublicense, sell or publish the
+project or any substantial part of it without the author's prior written permission.
+
+Third-party components (libraries, fonts, textures, map data and other assets) are
+NOT covered by this notice; they remain under their own licences, listed in
+CREDITS.md and public/THIRD-PARTY-LICENSES.txt.
+
+All teams, drivers, sponsors, logos and car designs in the game are fictional.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

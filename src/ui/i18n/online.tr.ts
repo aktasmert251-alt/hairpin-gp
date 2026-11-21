@@ -1,0 +1,27 @@
+const tr = {
+  quickJoin: 'Hızlı katıl',
+  directoryHint: 'Odaları görmek için takma adını gir.',
+  rooms: 'HERKESE AÇIK ODALAR', noRooms: 'Henüz açık oda yok. Bir oda oluşturabilirsin.', roomState: { lobby: 'Lobi', racing: 'Yarışta' },
+  backOnline: 'Çevrim içine dön', visibility: 'Görünürlük', visibilityValue: { public: 'Herkese açık', private: 'Özel' },
+  title: 'ONLINE', description: 'Arkadaşlarınla aynı gridde. Bir oda kur ya da oda koduyla katıl.',
+  name: 'Takma ad', nameHint: '2–16 karakter · Türkçe harfler kullanılabilir', badName: '2–16 harf, rakam, boşluk veya _ . - kullan.',
+  create: 'ODA OLUŞTUR', join: 'ODAYA KATIL', code: 'Kod ile katıl', codeHint: '5 karakterli oda kodunu gir.', badCode: '5 karakter kullan: A–Z (I ve O hariç), 2–9.',
+  advanced: 'Gelişmiş · sunucu adresi', server: 'Sunucu adresi', serverHint: 'Boş bırakırsan bu sitenin sunucusu kullanılır.',
+  badServer: 'Geçerli bir ws:// veya wss:// adresi gir. Güvenli sayfalarda wss:// gerekir.', back: 'Geri', unavailable: 'Çevrim içi bağlantı henüz kullanılamıyor.',
+  status: { offline: 'Bağlantı bekleniyor', connecting: 'Bağlanıyor…', online: 'Bağlandı', reconnecting: 'Yeniden bağlanıyor…', error: 'Bağlantı hatası' },
+  error: { maintenance: 'Sunucu bakımda. Biraz sonra tekrar dene.', full: 'Oda dolu.', notFound: 'Oda bulunamadı. Kodu kontrol et.', badName: 'Takma ad geçersiz.', taken: 'Bu araç başka bir oyuncuda.', version: 'Oyun sürümleri uyuşmuyor.', rate: 'Çok sık işlem yapıldı. Biraz bekle.', badMessage: 'İstek kabul edilmedi.', phase: 'Oda bu işleme kapalı.' },
+  lobby: 'YARIŞ ODASI', roomCode: 'Oda kodu · paylaş', copy: 'Kodu kopyala', copied: 'Kod kopyalandı', copyFailed: 'Kopyalanamadı · kodu seçip kopyala',
+  players: 'OYUNCULAR', humans: '{n}/4 oyuncu', empty: 'Oyuncu bekleniyor', owner: 'Oda sahibi', you: 'Sen', ready: 'HAZIR', unready: 'HAZIR DEĞİL', waiting: 'Hazır bekleniyor',
+  ping: '{n} ms', disconnected: 'Bağlantı kesildi', ai: '{n} yapay zekâ · toplam {total} araç',
+  settings: 'ODA AYARLARI', ownerSettings: 'Ayarları oda sahibi seçer.', car: 'ARACIN', team: 'Takım', driver: 'Pilot', carTaken: 'Seçilen araç artık uygun değil.',
+  aiCount: 'Yapay zekâ', difficulty: 'Zorluk', start: 'BAŞLAT', leave: 'ODADAN AYRIL', startHint: 'En az 2 oyuncu ve herkes hazır olmalı.', allReady: 'Grid hazır. Yarışı başlatabilirsin.',
+  emptyRoom: 'Bir oda kur veya oda koduyla katıl.', loading: 'Pist hazırlanıyor', countdown: 'YARIŞ BAŞLIYOR', go: 'BAŞLA',
+  pause: 'ONLINE · YARIŞ SÜRÜYOR', pauseHint: 'Bu menü açıkken yarış devam eder.', leaveRace: 'Yarıştan ayrıl', leaveRaceTitle: 'Yarıştan ayrıl?', leaveRaceBody: 'Yarış devam edecek. Odadan ayrılacaksın.',
+  // D-061 / D-062
+  mode: 'Mod', modeValue: { normal: 'Normal', kasap: 'Kasap' },
+  modeHint: { normal: 'Tüm kurallar: çarpışma ve pist sınırı cezaları, güvenlik aracı.', kasap: 'Kural yok: ceza, uyarı ve güvenlik aracı yok. Sadece yarış.' },
+  customTeam: 'Özel takım', customNone: 'Yok · standart takım', customOwnedBy: '{name} oluşturdu', customHint: 'Takımın, seçtiğin aracın iki koltuğunu alır. Bir takım arkadaşın ikinci pilot olarak katılabilir.',
+  resultsLobby: 'Odaya dön', sample: 'Örnek veri · sunucu bağlantısı yok',
+  tower: { ok: 'Bağlı', stale: 'Gecikme', dc: 'Bağlantı kesildi', staleBadge: 'LAG', dcBadge: 'DC', ping: '{n} ms' },
+};
+export default tr;

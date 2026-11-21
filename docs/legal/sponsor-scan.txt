@@ -1,0 +1,47 @@
+Case-insensitive repository text scan. Dependencies, git/internal agent metadata, generated test output and these hand-off reports excluded. Vortex team names and optional Vela sponsor names intentionally retained.
+
+docs/design/DESIGN.md:90: | Vortex Motorsport | matte black `#121314` | neon green `#39F26A` | white `#F2F4F7` | `#3DF06A` | matte | one neon rim line wrapping the sidepod | Pulsar Tech |
+docs/design/DESIGN.md:91: | Solaris Racing | orange `#FF6A13` | deep purple `#3B1A6B` | white `#F2F4F7` | `#FF7A1A` | metallic | hard 12° orange/purple split ("flare") | Halcyon Energy |
+docs/design/DESIGN.md:92: | Kestrel Racing | navy `#13235B` | gold `#C9A227` | white `#F2F4F7` | `#6478F0` (lifted navy) | gloss | gold wing-stripe along the spine | Nexa Watches |
+docs/design/DESIGN.md:94: | Titan Dynamics | gunmetal `#3A4048` | red `#D7262B` | silver `#B9C0C7` | `#9AA4AE` (steel) | matte | red blocks on nose tip and endplates | Vela Fuel |
+docs/design/DESIGN.md:120: | Vela Fuel | black `#101214` / amber `#FFB000` | `VELA FUEL` | sail triangle | Condensed 800, skewed 12° |
+docs/design/DESIGN.md:121: | Halcyon Energy | deep green `#0B3D2E` / mint `#7CE0B5` | `HALCYON ENERGY` | two concentric half-arcs | Condensed 600, +0.10em |
+docs/design/DESIGN.md:122: | Pulsar Tech | white `#F5F6F8` / ink `#0A0C0F` / blue `#2F6BFF` | `PULSAR TECH` | single pulse line | Barlow 600, sentence-case variant `Pulsar Tech` allowed |
+docs/design/DESIGN.md:126: | Nexa Watches | black `#0A0A0A` / silver `#C9CDD2` | `NEXA` | thin ring with one 12° hand | Condensed 500, +0.24em |
+docs/design/DESIGN.md:248: --apx-team-anka: #E8213F;     --apx-team-aurora: #2AA4FF;   --apx-team-vortex: #3DF06A;
+docs/design/example.html:39: --apx-team-anka:#E8213F;--apx-team-aurora:#2AA4FF;--apx-team-vortex:#3DF06A;--apx-team-solaris:#FF7A1A;--apx-team-kestrel:#6478F0;
+docs/design/example.html:345: <div class="row" style="--team:var(--apx-team-vortex)"><span class="pos num">2</span><span class="strip"></span><span></span><span class="code">ASH</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+1.204</span></div>
+docs/design/example.html:351: <div class="row" style="--team:var(--apx-team-vortex)"><span class="pos num">8</span><span class="strip"></span><span></span><span class="code">MEN</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"></span><span class="gap num">+3.117</span></div>
+docs/design/example.html:570: <div lang="en"><i style="--c:#E8213F"></i>Anka</div><div lang="en"><i style="--c:#2AA4FF"></i>Aurora</div><div lang="en"><i style="--c:#3DF06A"></i>Vortex</div>
+docs/design/example.html:679: <tr style="--team:var(--apx-team-vortex)"><td class="p num">2</td><td class="st"></td><td class="nm" lang="en">Tom Ashby<small>ASH</small></td><td class="tm" lang="en">Vortex Motorsport</td><td class="r num">+3.204</td><td class="r num">1:25.744</td><td class="c num">1</td><td class="c"></td><td class="r num" style="font-weight:800">18</td></tr>
+docs/design/planner-report.md:494: | Vortex Motorsport | matte black / neon green | matte | +0.015 | Tom Ashby (ASH, 9) · Rafael Mendes (MEN, 28) |
+docs/design/planner-report.md:507: - Billboard sponsors: Kuzey Air, Vela Fuel, Halcyon Energy, Pulsar Tech, Lale Çay, Kervan Bank, Mavi Rota Lojistik, Nexa Watches, Simit Express.
+docs/GDD.md:58: | Vortex Motorsport | mat siyah / neon yeşil | mat | +0,015 | Tom Ashby (ASH, 9) · Rafael Mendes (MEN, 28) |
+docs/GDD.md:68: - Sponsorlar (kurgusal): Kuzey Air, Vela Fuel, Halcyon Energy, Pulsar Tech, Lale Çay, Kervan Bank, Mavi Rota Lojistik, Nexa Watches, Simit Express. Lastik markası: ORBIS.
+docs/legal/audit.md:8: - **Oyun içi adlar:** Çoğu kurgusal ve sorunsuz. Değiştirilmesi önerilenler: **NEXA** (Maruti Suzuki'nin otomobil markası), **PULSAR TECH** (Bajaj Pulsar motosiklet, Seiko Pulsar saat), **HALCYON ENERGY** (2026'da 21 M$ yatırım alan bir ABD enerji-veri şirketi). İsteğe bağlı: **Vortex Motorsport** (gerçek Vortex V8 GT takımı ve Vortex kart motorları), **VELA FUEL** (Vela petrol tankerleri).
+docs/legal/audit.md:79: | **NEXA** (board + Kestrel car) | Maruti Suzuki's premium car-retail brand (since 2015, more than 460 showrooms). **Automotive field.** | **Medium–high** | Rename, e.g. **SEKANT** (keeps the "ring" mark) |
+docs/legal/audit.md:80: | **PULSAR TECH** (board + Vortex car) | Bajaj **Pulsar** motorcycles; Seiko's Pulsar watches; Pulsar gaming peripherals | **Medium** | Rename, e.g. **DALGA TEK** (fits the "pulse" mark) |
+docs/legal/audit.md:81: | **HALCYON ENERGY** (board + Solaris car) | Halcyon, a US AI energy-data company (US$21 M Series A, March 2026). Also offshore contractor "Halcyon". | **Medium** | Rename, e.g. **YALI ENERJİ** (keeps the "arcs" mark) |
+docs/legal/audit.md:82: | VELA FUEL | Vela International Marine (Bahri, oil tankers); VELIND fuels (DE) | Low–medium | Optional rename (e.g. **SÜREYYA YAKIT**), or keep |
+docs/legal/audit.md:95: | **Vortex Motorsport** | Real: Vortex SAS ("Vortex V8", French GT team in the 24H Series); Vortex kart engines (WSK, OK Junior) | **Low–medium**: motorsport field. Optional rename, e.g. **Girdap Motorsport**. |
+docs/legal/audit.md:117: | Liveries vs real teams | Some palettes resemble real ones: Anka red/white/gold (Ferrari red), Solaris orange (McLaren papaya), Titan grey/red (Haas), Zephyr light-blue/pink (Alpine/BWT), Vortex black/neon green (2024 Kick Sauber), Ironclad yellow/black (Jordan/Renault), Meridian teal/silver (Mercedes teal). | Low: colours alone are rarely protected and no names or logos are copied. Avoid stacking cues (a real team's colours **plus** its well-known number **plus** a similar sponsor layout). No change is required. |
+docs/legal/audit.md:182: | M2 | Rename sponsors NEXA, PULSAR TECH and HALCYON ENERGY (boards + liveries), after a quick check of the replacements. | Çevre (`trackside.ts`), Grafik (`livery.ts`) |
+docs/legal/audit.md:197: | S4 | Optional renames: Vortex Motorsport → e.g. Girdap Motorsport; VELA FUEL. | Lead (decision), Grafik/Çevre |
+docs/legal/audit.md:218: - NEXA: https://autocarpro.in/news/nexa-accounts-for-31-of-maruti-suzukis-sales-retail-channel-completes-8-years-of-operation-116014
+docs/legal/audit.md:219: - Halcyon: https://axios.com/pro/climate-deals/2026/03/16/halcyon-funding-21-million
+docs/legal/audit.md:220: - Vortex SAS: https://en.wikipedia.org/wiki/Vortex_SAS. Solaris Motorsport: https://www.touringcartimes.com/2011/11/24/new-team-solaris-motorsport-to-run-chevrolets-in-2012/
+docs/legal/audit.md:221: - Vela International Marine: https://en.wikipedia.org/wiki/Vela_International_Marine. Kervan: https://www.trendyol.com/kervan-x-b164186
+docs/qa/qc-sprint-2-checklist.md:50: | Fictional roster `src/data/teams.ts` | 10 invented teams (Anka, Aurora, Vortex, Solaris, Kestrel, Meridian, Titan, Zephyr, Ironclad, Nova Corsa) and 20 invented drivers. No collision with real names found by eye. |
+docs/sprints/DECISIONS.md:75: | D-047 | **New game name: HAIRPIN GP** (user choice 2026-10-14, from docs/legal/audit.md §1b; replaces "APEX GP" everywhere players see it: wordmark/logo, `<title>`, i18n, painted run-off/board wordmarks, liveries, trailer title, package/file names, DuckDNS host `hairpingp`). Internal code identifiers (`__APEX__`, `apexgp:v1:*` storage keys, repo folder) may stay to avoid churn. User to run TÜRKPATENT/EUIPO checks (classes 9/41). Same pass: audit M2–M7 (sponsor renames NEXA/PULSAR TECH/HALCYON ENERGY, OSM/Copernicus credits for all tracks + ODbL link, keep licence comments + THIRD-PARTY-LICENSES.txt, publish derived raw.json under ODbL, server IP truncation + 14-day log retention, privacy notice/terms). |
+docs/sprints/sprint-1.md:116: - **Screenshots:** `test-results/screens/grafik/car-anka.png`, `car-aurora.png`, `car-vortex.png` (matte), `car-solaris.png` (metallic), `car-lod0.png`, `car-lod1.png`, `car-lod2.png`, `car-grid-20.png`.
+src/data/teams.ts:37: id: 'vortex', name: 'Vortex Motorsport', short: 'VORTEX',
+src/graphics/car/livery.ts:37: vortex: { text: 'DALGA TEK', font: 'text', weight: 600 },
+src/graphics/car/livery.ts:41: titan: { text: 'VELA FUEL', font: 'cond', weight: 800 },
+src/graphics/car/livery.ts:220: cell(SW.suit, spec.team.id === 'vortex' ? '#1A1C1E' : P);
+src/graphics/car/livery.ts:254: case 'vortex':
+src/physics/__tests__/traits.test.ts:76: expect(byTrap.slice(0, 2).sort()).toEqual(['meridian', 'vortex']);
+src/track/authoring/istanbul.ts:103: export const BOX_TEAMS: readonly string[] = ['anka', 'aurora', 'vortex', 'solaris', 'kestrel', 'meridian', 'titan', 'zephyr', 'ironclad', 'nova'];
+src/track/scenery/trackside.ts:20: { name: 'vela', bg: '#101214', fg: '#FFB000', accent: '#FFB000', text: 'VELA FUEL', weight: 800, track: 0.02, mark: 'sail', skew: true },
+src/ui/sandbox/mockHud.ts:11: ['NRB', 'aurora', 'medium'], ['ASH', 'vortex', 'medium'], ['MOR', 'solaris', 'soft'], ['AYD', 'anka', 'medium'], ['GRA', 'kestrel', 'hard'],
+src/ui/sandbox/mockHud.ts:12: ['ORT', 'meridian', 'medium'], ['VIR', 'aurora', 'medium'], ['MEN', 'vortex', 'hard'], ['ARS', 'anka', 'medium'], ['LAM', 'solaris', 'soft'],
+src/ui/styles/tokens.css:75: --apx-team-anka: #E8213F;     --apx-team-aurora: #2AA4FF;   --apx-team-vortex: #3DF06A;

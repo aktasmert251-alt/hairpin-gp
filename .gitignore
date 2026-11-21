@@ -1,0 +1,25 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+media/
+coverage/
+.vite/
+*.log
+Thumbs.db
+.DS_Store
+graphify-out/
+/data/
+/server/data/
+
+# secrets / local credentials (never commit)
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+.oci/
+wrangler.toml.local
+.dev.vars
+.claude/worktrees/
+

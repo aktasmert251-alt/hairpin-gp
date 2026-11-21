@@ -1,0 +1,27 @@
+{
+  "recorded": "2026-11-21",
+  "note": "sha256 of LF-normalised src/contracts/*.ts. Re-record with UPDATE_CONTRACT_BASELINE=1 (see contracts-frozen.test.ts).",
+  "files": {
+    "ai.ts": "4ec8b79ef444398f56a20f256d0aab364236045577ebd0a55f6c0da6953a91a4",
+    "audio.ts": "562d3d2ce54c3484da87880e55859658f74a6f4f552e1f547cd7fee55ff95fd1",
+    "common.ts": "351013452db6b307066cbbed25361165f71cc1996dbaf86652ba84099eeff9f0",
+    "conditions.ts": "8b03b7d6da215ba818c707529149ed971bc5837f21ce4477e18700d082efede3",
+    "data.ts": "530b3191d6d148bb6af38b95b0474969b8366eb50dd0a753175bfa9bea5cfc19",
+    "debug.ts": "07f6f5e6ab0afe0fc33e961b1270d91cdd80e3cc4658f3e612ac887eb9594566",
+    "environment.ts": "b17f4ba43b5a01ed002eb7f845d2503a20d180e23fd9225800a0e2e35f2d28bd",
+    "events.ts": "18ae09f6db5773f027865c31b8039dce2143c52638bd48a513c1b8890be2a6f3",
+    "frames.ts": "3ba09f9d557c596f571002e2296cbe1cb5284b8ba6de1f4379fc19e633a376f7",
+    "hud.ts": "62fd77893941d78ecbdbfa21a2460c019654db33bf0a24a2b799e15f1456571d",
+    "input.ts": "49363f0b86a961fd176c7b208084279ec371ac45325b43bb75b156b647e8f817",
+    "modules.ts": "2d5bedc05d7618cdb4aec00114bfac4ff67b7a411d4df90f02155c3d3515ccb6",
+    "net.ts": "d3837c21e4317d996f605aee2e7e80cad4a84f6750e02afbe8a4903fb292f36b",
+    "race.ts": "0a7ccf46328d5f28790e5465ba4a393ac5f99398b4496802ac05c693fd474d65",
+    "render.ts": "8421e681d3cff10b996ad30640b649eb3e5778e313580b3e79da263ce6cc4e24",
+    "replay.ts": "88db2d87e3840123b1ff0636448645b852b1bd5d04c7f73bc8ae01931885a0a9",
+    "settings.ts": "eec9df602ef22e394b1c59cd84006842aa30bb7db9521d67420daf78314fbadd",
+    "sim.ts": "48c9b1f073bb40aaa81e44bcebf41e5e62e7fe40c008f7e849a15e3ad5c6815b",
+    "track.ts": "9c9b13c6d8ad2c3f671ed6a8568d2c6ff329826afbf4ee0ece62ff32b42a7552",
+    "ui.ts": "a10d75c7f3855b494ace0db0a049ee2902e3be902a0f31ec889a28ddced5e4f9",
+    "vehicle.ts": "cdf10dca5f7edbebc69100865497d382afa0822aa0c7b8890374cdb4da8beb0f"
+  }
+}

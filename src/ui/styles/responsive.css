@@ -1,0 +1,40 @@
+/* D-060: reference-stage scaling keeps panel geometry stable; small type has a CSS-pixel floor. */
+.m-meta, .m-lang, .m-ver, .m-item .meta, .m-row .note, .m-net-sample,
+.m-net-field .m-body, .m-online .m-net-field .m-body,
+.m-player-card .m-meta, .m-player-card .state { font-size: max(14px, var(--m-text-min, 12px)); }
+.m-player-card { grid-template-rows: minmax(24px, auto) minmax(20px, auto); padding: 3px 12px; }
+.m-player-card .name { line-height: 1.2; }
+.m-player-card .m-meta, .m-player-card .state { line-height: 1.2; }
+.m-lobby-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 80px; }
+.m-lobby-car .m-row { grid-template-columns: minmax(0, 1fr) 430px; }
+.m-equal-cars { margin: 8px 0; color: var(--apx-fg); }
+.m-lobby-actions { bottom: 100px; }
+/* Leave room for the three car rows, custom-team actions and the race controls below the roster. */
+.m-player-grid { max-height: 144px; overflow-y: auto; padding: 3px; }
+.m-lobby-head .m-net-message { margin-top: 8px; }
+.m-team-editor .m-row { height: 50px; }
+.m-team-editor .m-team-actions { margin-top: 12px; }
+.m-team-editor-details { position: absolute; left: 976px; top: 210px; width: 848px; display: flex; flex-direction: column; gap: 20px; }
+.m-team-editor-details .m-editor-traits, .m-team-editor-details .m-team-preview { position: relative; left: auto; top: auto; width: 100%; }
+.m-team-editor-details .m-team-traits { padding: 22px 32px; }
+.m-team-editor-details .m-traits-summary { margin-top: 16px; padding-top: 16px; }
+.m-team-editor-details .m-pace { margin-bottom: 16px; }
+.m-team-editor-details .m-team-preview { padding: 16px 32px; }
+.m-team-editor-details .m-livery-swatch { height: 90px; margin: 12px 0; }
+.m-row .lbl { overflow: visible; white-space: normal; line-height: 1.15; }
+.m-item .lbl { overflow: visible; line-height: 1.2; }
+.m-lang > span { padding-inline: 2px; }
+.m-net-sample { top: 8px; left: 50%; transform: translateX(-50%); }
+.apx-ui button:focus-visible, .apx-ui [tabindex]:focus-visible { outline: 2px solid var(--apx-fg); outline-offset: -2px; }
+
+/* Reserve separate centre slots for lights, the SC board, and the notification stack. */
+.h-sc { left: 50%; transform: translateX(-50%); top: var(--sy); width: calc(560 * var(--u)); min-height: calc(64 * var(--u));
+  display: flex; align-items: center; gap: calc(16 * var(--u)); padding: calc(12 * var(--u)); background: var(--apx-panel);
+  border-left: calc(6 * var(--u)) solid var(--apx-yellow); z-index: 21; }
+.h-sc .code { padding: calc(6 * var(--u)); background: var(--apx-yellow); color: var(--apx-on-fill); font-size: max(16px, calc(26 * var(--u))); }
+.h-sc .title { font-size: max(16px, calc(22 * var(--u))); font-weight: 700; line-height: 1.2; text-transform: uppercase; }
+.h-sc[data-state="green"] { border-color: var(--apx-green); }
+.h-sc[data-state="green"] .code { background: var(--apx-green); }
+.apx-hud[data-lights="1"] .h-sc { top: calc(var(--sy) + 150 * var(--u)); }
+.apx-hud[data-sc="1"] .h-banners { top: calc(var(--sy) + 80 * var(--u)); }
+.apx-hud[data-sc="1"][data-lights="1"] .h-banners { top: calc(var(--sy) + 230 * var(--u)); }

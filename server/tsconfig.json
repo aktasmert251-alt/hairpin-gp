@@ -1,0 +1,26 @@
+{
+  // Server typecheck: `tsc --noEmit -p server/tsconfig.json`. The server imports the pure sim layer and src/net from src/,
+  // and tsc checks those imported files with THIS config, so the options match the root tsconfig (no
+  // noUncheckedIndexedAccess) and the DOM/vite type libs are listed only because shared contract files and a lazily
+  // imported scenery module mention DOM types. Runtime purity is enforced by the bundle (scenery is external) and the
+  // arch test, not by this file.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "typeRoots": ["../node_modules/@types", "../node_modules"],
+    "types": ["node", "vite/client"],
+    "strict": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "useDefineForClassFields": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["src", "bots", "bench", "vite.config.ts", "vite.tools.config.ts"]
+}

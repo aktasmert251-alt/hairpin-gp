@@ -1,0 +1,15 @@
+# HAIRPIN GP optional signaling mailbox (D-064). Template: fill in YOUR KV namespace id after step 3 of README.md.
+# No account id or secret belongs in this file (wrangler reads the account from `wrangler login`).
+name = "hairpin-signal"
+main = "src/worker.ts"
+compatibility_date = "2026-10-01"
+
+# Free plan only: Workers + Workers KV. No Durable Objects, no paid features.
+[[kv_namespaces]]
+binding = "MAILBOX"
+id = "PASTE_YOUR_KV_NAMESPACE_ID_HERE"
+
+[vars]
+# Your game page origin(s), comma-separated, e.g. "https://<user>.github.io,http://localhost:5173".
+# Recommended: set it. Other sites' pages are then refused (403). Empty = any origin may use the mailbox.
+ALLOWED_ORIGIN = ""

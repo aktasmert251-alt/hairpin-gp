@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>HAIRPIN GP Yönetici</title>
+<link rel="stylesheet" href="/admin/panel.css">
+<script type="module" src="/admin/panel.js"></script>
+</head>
+<body>
+<main id="login" class="login" hidden>
+  <form id="loginForm" class="card login-card" autocomplete="off">
+    <h1>HAIRPIN GP <span>Yönetici</span></h1>
+    <label>Parola<input id="pw" type="password" autocomplete="current-password" required maxlength="256"></label>
+    <label>Doğrulama kodu<input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required autocomplete="one-time-code"></label>
+    <button type="submit">Giriş</button>
+    <p id="loginMsg" class="msg" role="alert"></p>
+  </form>
+</main>
+
+<div id="app" hidden>
+  <header class="top">
+    <h1>HAIRPIN GP <span>Yönetici</span></h1>
+    <div class="top-right">
+      <span id="maintBadge" class="badge warn" hidden>BAKIM</span>
+      <span id="sessionLeft" class="muted"></span>
+      <button id="logout" class="ghost">Çıkış</button>
+    </div>
+  </header>
+
+  <section class="tiles" id="tiles"></section>
+  <section class="card" id="inbox">
+    <div class="row"><h2 id="inboxTitle"></h2><select id="inboxLang"><option value="tr">TR</option><option value="en">EN</option></select></div>
+    <p class="muted" id="inboxNote"></p>
+    <div class="row"><label id="inboxTypeLabel" for="inboxType"></label><select id="inboxType"></select><label id="inboxStatusLabel" for="inboxStatus"></label><select id="inboxStatus"></select><button id="inboxRefresh" class="ghost"></button></div>
+    <p id="inboxError" role="status"></p>
+    <div id="inboxMessages"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Bakım modu</h2>
+      <p class="muted">Açıkken yeni oda ve katılım reddedilir; süren yarışlar devam eder.</p>
+      <button id="maintToggle"></button>
+    </div>
+    <div class="card">
+      <h2>Duyuru</h2>
+      <form id="noticeForm" class="row">
+        <input id="noticeText" maxlength="200" placeholder="Tüm oyunculara mesaj (en çok 200 karakter)">
+        <button type="submit">Gönder</button>
+        <button type="button" id="noticeClear" class="ghost">Temizle</button>
+      </form>
+      <p class="muted" id="noticeNow"></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Odalar <span class="count" id="roomCount"></span></h2>
+    <table><thead><tr><th>Kod</th><th>Durum</th><th>Pist</th><th>Tur</th><th>İnsan</th><th>AI</th><th>Sim CPU</th></tr></thead><tbody id="rooms"></tbody></table>
+  </section>
+
+  <section class="card">
+    <h2>Oyuncular <span class="count" id="playerCount"></span></h2>
+    <table><thead><tr><th>Takma ad</th><th>NetId</th><th>Oda</th><th>Ping</th><th>Bağlantı</th><th>Uyarı</th><th>İhlal</th><th>Cihaz</th><th>İşlem</th></tr></thead><tbody id="players"></tbody></table>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Yasaklar <span class="count" id="banCount"></span></h2>
+      <table><thead><tr><th>Takma ad</th><th>Neden</th><th>Bitiş</th><th>Anahtar</th><th></th></tr></thead><tbody id="bans"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>Son olaylar</h2>
+      <ol id="events" class="events"></ol>
+    </div>
+  </section>
+  <p id="toast" class="toast" role="status" hidden></p>
+</div>
+</body>
+</html>

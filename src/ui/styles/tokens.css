@@ -1,0 +1,102 @@
+/* HAIRPIN GP design tokens. Colour block copied verbatim from docs/design/DESIGN.md §2.2;
+   type (§3.1), spacing (§4.1) and motion (§7.2) mirrors follow. Single source for src/ui/**. */
+:root {
+  /* Neutrals: graphite with a faint blue undertone */
+  --apx-ink-950: #050608;   /* letterbox, lights housing */
+  --apx-ink-900: #0A0C0F;   /* app background; ink text on fills */
+  --apx-ink-850: #0F1216;   /* solid panel */
+  --apx-ink-800: #151920;   /* raised: tiles, table header */
+  --apx-ink-700: #1E242C;   /* hover-raised, control tracks */
+  --apx-ink-600: #2A313B;
+  --apx-ink-500: #3A4350;
+  --apx-fg: #F2F4F7;        /* primary text, white row */
+  --apx-fg-2: #B4BCC7;      /* secondary text */
+  --apx-fg-3: #949EAB;      /* labels, units, tertiary */
+  --apx-fg-disabled: #5E6773;
+  --apx-line: rgba(242, 244, 247, 0.12);
+  --apx-line-strong: rgba(242, 244, 247, 0.28);
+  --apx-on-fill: #0A0C0F;   /* text on every fill */
+
+  /* Surfaces */
+  --apx-panel: rgba(9, 11, 14, 0.88);        /* every text-bearing HUD panel */
+  --apx-panel-weak: rgba(9, 11, 14, 0.64);   /* menus only: decorative backplates over the dark showroom; never in the HUD */
+  --apx-panel-raised: rgba(30, 36, 44, 0.92);/* menu tiles, focused setting row base */
+  --apx-scrim: rgba(5, 6, 8, 0.72);          /* pause dim over the game */
+  --apx-row-hi: rgba(242, 244, 247, 0.10);   /* focused setting row, player row in tables */
+
+  /* Brand (menus and brand moments only) */
+  --apx-brand: #FF4B1F;        /* "Apex vermilion" */
+  --apx-brand-press: #E03A12;
+
+  /* Semantic hues: each works as a fill (ink text) AND as text on panels */
+  --apx-purple: #B470FF;   /* overall best: purple sector, fastest lap */
+  --apx-green:  #2ED16B;   /* personal best, faster delta, DRS, inter, good */
+  --apx-yellow: #FFD019;   /* slower sector, yellow flag, medium tyre */
+  --apx-red:    #FF5C5C;   /* penalty, slower delta, invalid, soft tyre */
+  --apx-blue:   #5C8FFF;   /* blue flag, wet tyre, pit limiter */
+  --apx-amber:  #FFB21A;   /* ERS, warnings */
+
+  /* Aliases (use these in components) */
+  --apx-sector-purple: var(--apx-purple);
+  --apx-sector-green:  var(--apx-green);
+  --apx-sector-yellow: var(--apx-yellow);
+  --apx-sector-none:   rgba(242, 244, 247, 0.18);
+  --apx-tyre-soft:   var(--apx-red);
+  --apx-tyre-medium: var(--apx-yellow);
+  --apx-tyre-hard:   var(--apx-fg);
+  --apx-tyre-inter:  var(--apx-green);
+  --apx-tyre-wet:    var(--apx-blue);
+  --apx-flag-green:  var(--apx-green);
+  --apx-flag-yellow: var(--apx-yellow);
+  --apx-flag-blue:   var(--apx-blue);
+  --apx-delta-faster: var(--apx-green);
+  --apx-delta-slower: var(--apx-red);
+  --apx-level-info:    var(--apx-fg);
+  --apx-level-good:    var(--apx-green);
+  --apx-level-warn:    var(--apx-amber);
+  --apx-level-penalty: var(--apx-red);
+  --apx-drs: var(--apx-green);
+  --apx-ers: var(--apx-amber);
+  --apx-ers-none: var(--apx-fg-3);
+  --apx-pit-limiter: var(--apx-blue);
+  --apx-temp-cold: #5AA9FF;
+  --apx-temp-ok:   var(--apx-green);
+  --apx-temp-hot:  #FF7A45;
+
+  /* Shift LEDs (emissive look, separate from semantics) */
+  --apx-led-green: #22D36B;
+  --apx-led-red:   #FF2D2D;
+  --apx-led-blue:  #3D7BFF;
+  --apx-led-off:   rgba(242, 244, 247, 0.10);
+  --apx-lamp-on:   #FF2D2D;   /* start lights */
+  --apx-lamp-off:  #2B1012;
+
+  /* Team strips (HUD `ui` colour, see §1.4.2) */
+  --apx-team-anka: #E8213F;     --apx-team-aurora: #2AA4FF;   --apx-team-vortex: #3DF06A;
+  --apx-team-solaris: #FF7A1A;  --apx-team-kestrel: #6478F0;  --apx-team-meridian: #14B8A6;
+  --apx-team-titan: #9AA4AE;    --apx-team-zephyr: #FF6FB5;   --apx-team-ironclad: #FFE01A;
+  --apx-team-nova: #F2F4F7;
+
+  /* Type (§3.1) */
+  --font-cond: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
+  --font-text: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+
+  /* Spacing (§4.1) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+  --apx-slant: 12deg;
+
+  /* Motion (§7.2) */
+  --apx-dur-fast: 140ms;
+  --apx-dur-base: 180ms;
+  --apx-dur-slow: 220ms;
+  --apx-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --apx-ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --apx-ease-in: cubic-bezier(.64, 0, .78, 0);
+  --apx-ease-settle: linear(0, .137 8%, .394 17%, .636 25%, .814 33%, .926 42%, .987 50%, 1.013 58%, 1.02 67%, 1.018 75%, 1.013 83%, 1.008 92%, 1);
+
+  /* Scale defaults so components render outside a frame too (§4.2) */
+  --k: 1;
+  --kv: 1;
+  --u: calc(var(--k) * 1px);
+  --m: calc(var(--kv) * 1px);
+}

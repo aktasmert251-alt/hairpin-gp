@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APEX GP · Tasarım Önizlemesi</title>
+<style>
+/* =====================================================================
+   APEX GP · contract preview for docs/design/DESIGN.md
+   Fonts: Barlow Condensed + Barlow (SIL OFL 1.1), self-hosted, relative paths.
+   Open in Chrome/Edge (Firefox may block ../../ font paths on file://).
+   ===================================================================== */
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:500;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-500-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:500;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-ext-500-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:600;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:600;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-ext-600-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-ext-700-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:800;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-800-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:800;font-display:block;src:url('../../public/assets/gra/fonts/barlow-condensed-latin-ext-800-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:block;src:url('../../public/assets/gra/fonts/barlow-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:block;src:url('../../public/assets/gra/fonts/barlow-latin-ext-400-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:block;src:url('../../public/assets/gra/fonts/barlow-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:block;src:url('../../public/assets/gra/fonts/barlow-latin-ext-600-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+/* ---------------- Tokens (DESIGN.md §2.2) ---------------- */
+:root{
+  --apx-ink-950:#050608;--apx-ink-900:#0A0C0F;--apx-ink-850:#0F1216;--apx-ink-800:#151920;--apx-ink-700:#1E242C;--apx-ink-600:#2A313B;--apx-ink-500:#3A4350;
+  --apx-fg:#F2F4F7;--apx-fg-2:#B4BCC7;--apx-fg-3:#949EAB;--apx-fg-disabled:#5E6773;
+  --apx-line:rgba(242,244,247,.12);--apx-line-strong:rgba(242,244,247,.28);--apx-on-fill:#0A0C0F;
+  --apx-panel:rgba(9,11,14,.88);--apx-panel-weak:rgba(9,11,14,.64);--apx-panel-raised:rgba(30,36,44,.92);--apx-scrim:rgba(5,6,8,.72);--apx-row-hi:rgba(242,244,247,.10);
+  --apx-brand:#FF4B1F;--apx-brand-press:#E03A12;
+  --apx-purple:#B470FF;--apx-green:#2ED16B;--apx-yellow:#FFD019;--apx-red:#FF5C5C;--apx-blue:#5C8FFF;--apx-amber:#FFB21A;
+  --apx-sector-none:rgba(242,244,247,.18);
+  --apx-tyre-soft:var(--apx-red);--apx-tyre-medium:var(--apx-yellow);--apx-tyre-hard:var(--apx-fg);--apx-tyre-inter:var(--apx-green);--apx-tyre-wet:var(--apx-blue);
+  --apx-temp-cold:#5AA9FF;--apx-temp-ok:var(--apx-green);--apx-temp-hot:#FF7A45;
+  --apx-led-green:#22D36B;--apx-led-red:#FF2D2D;--apx-led-blue:#3D7BFF;--apx-led-off:rgba(242,244,247,.10);
+  --apx-lamp-on:#FF2D2D;--apx-lamp-off:#2B1012;
+  --apx-team-anka:#E8213F;--apx-team-aurora:#2AA4FF;--apx-team-vortex:#3DF06A;--apx-team-solaris:#FF7A1A;--apx-team-kestrel:#6478F0;
+  --apx-team-meridian:#14B8A6;--apx-team-titan:#9AA4AE;--apx-team-zephyr:#FF6FB5;--apx-team-ironclad:#FFE01A;--apx-team-nova:#F2F4F7;
+  --k:1;--u:1px; /* defaults so components also render outside the HUD frame */
+  --font-cond:'Barlow Condensed','Arial Narrow','Roboto Condensed',sans-serif;
+  --font-text:'Barlow','Segoe UI',system-ui,sans-serif;
+  --apx-ease-out:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--apx-ink-950);color:var(--apx-fg)}
+body{font-family:var(--font-cond);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+ul{list-style:none}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}
+.up{text-transform:uppercase}
+svg.i{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter}
+svg.i.fill{fill:currentColor;stroke:none}
+
+/* ====================== FRAME 1 · HUD (k = 1) ====================== */
+.frame{position:relative;width:1920px;height:1080px;overflow:hidden}
+.hud{--k:1;--u:calc(var(--k)*1px);--sx:calc(48px*var(--k));--sy:calc(40px*var(--k))}
+/* placeholder for the WebGL canvas: deliberately dark, with a bright sun patch top-right as the worst case */
+.scene{position:absolute;inset:0;background:
+  radial-gradient(ellipse 520px 300px at 79% 6%,rgba(255,244,229,.92),rgba(255,244,229,0) 70%),
+  linear-gradient(180deg,#2B3646 0%,#4A586C 34%,#66717C 46.4%,#20252C 46.5%,#14171B 100%)}
+.scene .road{position:absolute;inset:0;background:#262A30;clip-path:polygon(48.3% 46.5%,51.7% 46.5%,93% 100%,7% 100%)}
+.scene .line-l{position:absolute;inset:0;background:rgba(242,244,247,.45);clip-path:polygon(48.3% 46.5%,48.45% 46.5%,8.6% 100%,7% 100%)}
+.scene .line-r{position:absolute;inset:0;background:rgba(242,244,247,.45);clip-path:polygon(51.55% 46.5%,51.7% 46.5%,93% 100%,91.4% 100%)}
+.scene .kerb{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#C8232B 0 28px,#E9E9E6 28px 56px);clip-path:polygon(46.4% 52%,47.6% 52%,4.6% 100%,0% 100%);opacity:.75}
+.scene .grass{position:absolute;inset:0;background:#2C3524;clip-path:polygon(0 46.5%,48.3% 46.5%,0 100%);opacity:.65}
+.scene .grass.r{clip-path:polygon(51.7% 46.5%,100% 46.5%,100% 100%)}
+.scene .ph{position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);text-align:center;color:rgba(242,244,247,.42);font-weight:600;font-size:15px;letter-spacing:.24em}
+.scene .ph small{display:block;margin-top:8px;font-size:13px;letter-spacing:.16em;color:rgba(242,244,247,.30)}
+.sample-tag{position:absolute;left:50%;bottom:var(--sy);transform:translateX(-50%);font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--apx-fg-3);border:1px dashed var(--apx-line-strong);padding:6px 12px;background:rgba(9,11,14,.6)}
+
+/* ---- Tower ---- */
+.tower{position:absolute;left:var(--sx);top:var(--sy);width:calc(var(--u)*280);contain:layout paint style}
+.tower-head{height:calc(var(--u)*32);background:var(--apx-panel);display:flex;align-items:center;justify-content:space-between;padding:0 calc(var(--u)*16) 0 calc(var(--u)*12);
+  clip-path:polygon(0 0,calc(100% - var(--u)*7) 0,100% 100%,0 100%);font-size:calc(var(--u)*13);font-weight:600;letter-spacing:.08em;color:var(--apx-fg-3)}
+.tower-head b{color:var(--apx-fg);font-weight:700}
+.tower-body{background:var(--apx-panel)}
+.row{display:grid;grid-template-columns:calc(var(--u)*36) calc(var(--u)*4) calc(var(--u)*8) calc(var(--u)*52) calc(var(--u)*18) calc(var(--u)*6) calc(var(--u)*44) 1fr;
+  align-items:center;height:calc(var(--u)*30);border-top:1px solid var(--apx-line);padding-right:calc(var(--u)*8);position:relative}
+.row .pos{position:relative;text-align:right;padding-right:calc(var(--u)*7);font-size:calc(var(--u)*19);font-weight:700}
+.row .strip{height:100%;background:var(--team)}
+.row .code{font-size:calc(var(--u)*19);font-weight:700;letter-spacing:.04em;line-height:1}
+.row .gap{text-align:right;font-size:calc(var(--u)*17);font-weight:600;color:var(--apx-fg-2);line-height:1}
+.chg{position:absolute;left:calc(var(--u)*3);top:50%;transform:translateY(-50%);width:calc(var(--u)*10);height:calc(var(--u)*10)}
+.chg.up{color:var(--apx-green)} .chg.dn{color:var(--apx-red)}
+.tyre{width:calc(var(--u)*18);height:calc(var(--u)*18);border-radius:50%;background:var(--apx-ink-900);border:calc(var(--u)*2) solid var(--c);color:var(--c);
+  display:grid;place-items:center;font-size:calc(var(--u)*11);font-weight:800;line-height:1}
+.badge{display:flex;align-items:center}
+.b-pen{background:var(--apx-red);color:var(--apx-on-fill);font-size:calc(var(--u)*13);font-weight:700;height:calc(var(--u)*18);padding:0 calc(var(--u)*5);display:grid;place-items:center;line-height:1}
+.b-drs{border:1px solid var(--apx-green);color:var(--apx-green);font-size:calc(var(--u)*13);font-weight:700;letter-spacing:.04em;height:calc(var(--u)*18);padding:0 calc(var(--u)*4);display:grid;place-items:center;line-height:1}
+.b-fl{color:var(--apx-purple);font-size:calc(var(--u)*16)}
+.pit-chip{display:inline-grid;place-items:center;border:1px solid var(--apx-fg);color:var(--apx-fg);font-size:calc(var(--u)*13);font-weight:700;letter-spacing:.06em;height:calc(var(--u)*18);padding:0 calc(var(--u)*5);line-height:1}
+.row.me{background:var(--apx-fg);color:var(--apx-on-fill)}
+.row.me .gap{color:var(--apx-on-fill)}
+.row.me .b-drs{background:var(--apx-green);color:var(--apx-on-fill);border-color:var(--apx-green)}
+.row.inpit .code,.row.inpit .pos{color:var(--apx-fg-2)}
+.row.out{color:var(--apx-fg-disabled)} .row.out .gap{color:var(--apx-fg-disabled)} .row.out .strip{opacity:.4} .row.out .tyre{opacity:.4}
+
+/* ---- Timing panel ---- */
+.timing{position:absolute;right:var(--sx);top:var(--sy);width:calc(var(--u)*360);background:var(--apx-panel);padding:calc(var(--u)*12) calc(var(--u)*16) calc(var(--u)*14);contain:layout paint style}
+.t-a{display:flex;justify-content:space-between;align-items:flex-end;height:calc(var(--u)*48)}
+.t-pos{font-size:calc(var(--u)*40);font-weight:800;line-height:.8}
+.t-pos small{font-size:calc(var(--u)*19);font-weight:700;color:var(--apx-fg-3);margin-left:calc(var(--u)*2)}
+.t-lap{display:flex;align-items:baseline;gap:calc(var(--u)*8)}
+.lbl{font-size:calc(var(--u)*13);font-weight:600;letter-spacing:.08em;color:var(--apx-fg-3);line-height:1}
+.lbl15{font-size:calc(var(--u)*15);font-weight:600;letter-spacing:.06em;color:var(--apx-fg-3);line-height:1}
+.t-lap .v{font-size:calc(var(--u)*28);font-weight:700;line-height:.8}
+.t-lap .v small{font-size:calc(var(--u)*19);color:var(--apx-fg-3);font-weight:700}
+.t-b{display:flex;justify-content:space-between;align-items:center;height:calc(var(--u)*52);border-top:1px solid var(--apx-line);margin-top:calc(var(--u)*10)}
+.t-cur{font-size:calc(var(--u)*34);font-weight:700;line-height:1}
+.delta{height:calc(var(--u)*28);min-width:calc(var(--u)*76);display:grid;place-items:center;padding:0 calc(var(--u)*10);font-size:calc(var(--u)*19);font-weight:700;color:var(--apx-on-fill);
+  clip-path:polygon(calc(var(--u)*6) 0,100% 0,calc(100% - var(--u)*6) 100%,0 100%)}
+.delta.faster{background:var(--apx-green)} .delta.slower{background:var(--apx-red)}
+.t-c{display:grid;grid-template-columns:1fr 1fr;height:calc(var(--u)*40);align-items:center;border-top:1px solid var(--apx-line)}
+.t-c div{display:flex;align-items:baseline;gap:calc(var(--u)*8)}
+.t-c div:last-child{justify-content:flex-end}
+.t-c .v{font-size:calc(var(--u)*19);font-weight:700}
+.sectors{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--u)*4);margin-top:calc(var(--u)*4)}
+.sec .bar{height:calc(var(--u)*6);background:var(--apx-sector-none)}
+.sec .bar.purple{background:var(--apx-purple)} .sec .bar.green{background:var(--apx-green)} .sec .bar.yellow{background:var(--apx-yellow)}
+.sec .bar.live{background:transparent;outline:1px solid var(--apx-fg);outline-offset:-1px}
+.sec .meta{display:flex;justify-content:flex-start;gap:calc(var(--u)*8);align-items:baseline;margin-top:calc(var(--u)*8)}
+.sec .meta .v{font-size:calc(var(--u)*17);font-weight:600}
+.sec .meta .v.none{color:var(--apx-fg-3)}
+
+/* ---- Notification banner ---- */
+.banner{position:absolute;left:50%;top:var(--sy);transform:translateX(-50%);height:calc(var(--u)*56);display:flex;align-items:center;background:var(--apx-panel);
+  padding-right:calc(var(--u)*30);min-width:calc(var(--u)*480);clip-path:polygon(0 0,100% 0,calc(100% - var(--u)*12) 100%,0 100%)}
+.banner .stripe{width:calc(var(--u)*6);align-self:stretch;background:var(--lvl)}
+.banner .ic{color:var(--lvl);font-size:calc(var(--u)*24);margin:0 calc(var(--u)*14) 0 calc(var(--u)*16)}
+.banner .title{font-size:calc(var(--u)*22);font-weight:700;letter-spacing:.04em;line-height:1}
+.banner .div{width:1px;height:calc(var(--u)*28);background:var(--apx-line);margin:0 calc(var(--u)*16)}
+.banner .detail{font-size:calc(var(--u)*17);font-weight:600;color:var(--apx-fg);line-height:1;display:flex;gap:calc(var(--u)*8);align-items:center}
+.banner .detail .code-strip{width:calc(var(--u)*4);height:calc(var(--u)*16);background:var(--team)}
+
+/* ---- Wheel module ---- */
+.wheel{position:absolute;right:var(--sx);bottom:var(--sy);width:calc(var(--u)*400);height:calc(var(--u)*196);background:var(--apx-panel);padding:calc(var(--u)*16);contain:layout paint style}
+.leds{display:flex;justify-content:center;gap:calc(var(--u)*4)}
+.led{width:calc(var(--u)*20);height:calc(var(--u)*12);transform:skewX(-12deg);background:var(--apx-led-off)}
+.led.g{background:var(--apx-led-green)} .led.r{background:var(--apx-led-red)} .led.b{background:var(--apx-led-blue)}
+.w-mid{display:grid;grid-template-columns:calc(var(--u)*120) calc(var(--u)*112) calc(var(--u)*120);column-gap:calc(var(--u)*8);align-items:center;height:calc(var(--u)*108);margin-top:calc(var(--u)*8)}
+.speed{text-align:right}
+.speed .v{font-size:calc(var(--u)*46);font-weight:700;line-height:.9;display:block}
+.speed .lbl{display:block;margin-top:calc(var(--u)*6)}
+.gear{font-size:calc(var(--u)*116);font-weight:800;line-height:.9;text-align:center}
+.w-right{display:flex;flex-direction:column;align-items:flex-start;gap:calc(var(--u)*10)}
+/* Outlined slanted chips: skew the box (borders survive on all 4 sides), counter-skew the label. Filled shapes may use clip-path. */
+.chip{height:calc(var(--u)*28);min-width:calc(var(--u)*64);display:inline-grid;place-items:center;padding:0 calc(var(--u)*10);font-size:calc(var(--u)*15);font-weight:700;letter-spacing:.06em;line-height:1;
+  transform:skewX(-12deg);border:2px solid transparent;position:relative}
+.chip>span{display:block;transform:skewX(12deg)}
+.drs-off{display:none}
+.drs-unavailable{color:var(--apx-fg-3);border:1px solid var(--apx-line-strong)}
+.drs-available{color:var(--apx-green);border-color:var(--apx-green)}
+.drs-open{background:var(--apx-green);border-color:var(--apx-green);color:var(--apx-on-fill)}
+.drs-disabled{color:var(--apx-fg-3);border:1px solid var(--apx-line-strong)}
+.drs-disabled::after{content:'';position:absolute;left:14%;right:14%;top:50%;height:2px;background:var(--apx-fg-3);transform:rotate(-12deg)}
+.pit-on{background:var(--apx-blue);border-color:var(--apx-blue);color:var(--apx-on-fill)}
+.bias{display:flex;align-items:baseline;gap:calc(var(--u)*6)}
+.bias .v{font-size:calc(var(--u)*17);font-weight:600}
+.ers{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;column-gap:calc(var(--u)*10);margin-top:calc(var(--u)*10)}
+.ers .track{height:calc(var(--u)*8);background:var(--apx-line);position:relative}
+.ers .fill{position:absolute;inset:0;background:var(--apx-amber);transform-origin:left;transform:scaleX(var(--soc))}
+.ers .used{position:absolute;left:0;right:0;bottom:calc(var(--u)*-5);height:2px;background:var(--apx-line)}
+.ers .used i{position:absolute;inset:0;background:var(--apx-fg-2);transform-origin:left;transform:scaleX(var(--lap))}
+.ers .v{font-size:calc(var(--u)*17);font-weight:600}
+.ers-mode{height:calc(var(--u)*24);padding:0 calc(var(--u)*9);display:inline-grid;place-items:center;font-size:calc(var(--u)*13);font-weight:700;letter-spacing:.06em;color:var(--apx-amber);
+  border:1px solid var(--apx-amber);transform:skewX(-12deg)}
+.ers-mode>span{display:block;transform:skewX(12deg)}
+.ers-mode.ot{background:var(--apx-amber);color:var(--apx-on-fill)}
+.ers-mode.none{color:var(--apx-fg-3);border-color:var(--apx-line-strong)}
+
+/* ---- Bottom-left: weather + minimap + tyres ---- */
+.bl{position:absolute;left:var(--sx);bottom:var(--sy);width:calc(var(--u)*400);contain:layout paint style}
+.wx{height:calc(var(--u)*32);background:var(--apx-panel);display:flex;align-items:center;gap:calc(var(--u)*16);padding:0 calc(var(--u)*12);margin-bottom:calc(var(--u)*8)}
+.wx span{display:flex;align-items:baseline;gap:calc(var(--u)*6)}
+.wx .v{font-size:calc(var(--u)*17);font-weight:600}
+.wx .ic{color:var(--apx-fg-3);font-size:calc(var(--u)*16);margin-left:auto}
+.bl-row{display:flex;gap:calc(var(--u)*8)}
+.minimap{width:calc(var(--u)*240);height:calc(var(--u)*200);background:var(--apx-panel);padding:calc(var(--u)*8);position:relative}
+.minimap svg{width:100%;height:100%;display:block}
+.minimap .mm-lbl{position:absolute;left:calc(var(--u)*10);top:calc(var(--u)*9)}
+.tyres{width:calc(var(--u)*152);height:calc(var(--u)*200);background:var(--apx-panel);padding:calc(var(--u)*12)}
+.ty-head{display:flex;align-items:center;gap:calc(var(--u)*8);height:calc(var(--u)*28)}
+.ring28{width:calc(var(--u)*28);height:calc(var(--u)*28);border-radius:50%;border:calc(var(--u)*3) solid var(--c);color:var(--c);background:var(--apx-ink-900);display:grid;place-items:center;font-size:calc(var(--u)*15);font-weight:800;line-height:1}
+.ty-head .t{font-size:calc(var(--u)*15);font-weight:600;letter-spacing:.06em;line-height:1.1}
+.ty-head .t small{display:block;font-size:calc(var(--u)*13);color:var(--apx-fg-3);letter-spacing:.08em}
+.ty-grid{display:grid;grid-template-columns:1fr 1fr;row-gap:calc(var(--u)*12);column-gap:calc(var(--u)*4);margin-top:calc(var(--u)*14)}
+.ty{display:flex;align-items:center;gap:calc(var(--u)*7)}
+.ty .g{width:calc(var(--u)*24);height:calc(var(--u)*40);border-radius:calc(var(--u)*4);border:calc(var(--u)*2) solid var(--s);background:color-mix(in srgb,var(--s) 22%,transparent)}
+.ty .vals{display:flex;flex-direction:column;gap:calc(var(--u)*5)}
+.ty .w{font-size:calc(var(--u)*17);font-weight:600;line-height:1}
+.ty .tc{font-size:calc(var(--u)*13);font-weight:600;line-height:1;color:var(--s)}
+.ty-cap{margin-top:calc(var(--u)*12)}
+
+/* ====================== FRAME 2 · MAIN MENU ====================== */
+.menu{background:#0A0C0F}
+.showroom{position:absolute;inset:0;background:radial-gradient(ellipse 900px 520px at 63% 52%,#1B2129 0%,#12161C 55%,#0A0C0F 100%)}
+.showroom .floor{position:absolute;left:0;right:0;top:66%;bottom:0;background:linear-gradient(180deg,#14181E 0%,#0C0E12 100%)}
+.showroom .turntable{position:absolute;left:63%;top:66%;width:980px;height:150px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(242,244,247,.10);background:rgba(242,244,247,.025)}
+.showroom .light{position:absolute;left:47%;width:32%;top:0;height:6px;background:rgba(242,244,247,.22)}
+.showroom .light::after{content:'';position:absolute;left:0;right:0;top:6px;height:420px;background:linear-gradient(180deg,rgba(242,244,247,.05),rgba(242,244,247,0));clip-path:polygon(0 0,100% 0,112% 100%,-12% 100%)}
+.showroom .ph{position:absolute;left:63%;top:47%;transform:translate(-50%,-50%);text-align:center;color:rgba(242,244,247,.40);font-weight:600;font-size:15px;letter-spacing:.24em}
+.showroom .ph small{display:block;margin-top:8px;font-size:13px;letter-spacing:.16em;color:rgba(242,244,247,.28)}
+.scrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,6,8,.94) 0%,rgba(5,6,8,.86) 30%,rgba(5,6,8,0) 50%)}
+.m-top{position:absolute;left:96px;right:96px;top:64px;display:flex;justify-content:space-between;align-items:center}
+.m-top .wm{height:48px;width:auto;display:block}
+.lang{display:flex;gap:20px;align-items:center;font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-3)}
+.lang .on{color:var(--apx-fg);position:relative}
+.lang .on::after{content:'';position:absolute;left:-2px;right:-2px;bottom:-8px;height:3px;background:var(--apx-brand);transform:skewX(-12deg)}
+.m-nav{position:absolute;left:96px;top:330px;width:560px}
+.eyebrow{font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-3);margin-bottom:18px}
+.navrow{position:relative;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 32px;font-size:30px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--apx-fg)}
+.navrow .meta{font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-2);text-transform:none}
+.navrow.is-focus{background:var(--apx-fg);color:var(--apx-on-fill)}
+.navrow.is-focus .meta{color:#3A4350}
+.notch{position:absolute;left:0;top:0;bottom:0;width:22px;background:var(--apx-brand);clip-path:polygon(13.6px 0,21.6px 0,8px 100%,0 100%)}
+.m-desc{margin-top:28px;padding-left:32px;max-width:520px;font-family:var(--font-text);font-size:19px;line-height:1.45;color:var(--apx-fg-2)}
+.m-card{position:absolute;right:96px;bottom:128px;width:520px;background:var(--apx-panel);padding:24px 28px}
+.m-card h2{font-size:32px;font-weight:700;letter-spacing:.02em;line-height:1;margin-top:10px}
+.m-card .facts{font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-2);margin-top:12px}
+.m-card .pb{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--apx-line);margin-top:20px;padding-top:16px}
+.m-card .pb .v{font-size:34px;font-weight:700}
+.m-card .sectors{margin-top:12px}
+.m-card .sec .meta .v{font-size:17px}
+.m-bar{position:absolute;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 96px;border-top:1px solid var(--apx-line);background:rgba(5,6,8,.72)}
+.hints{display:flex;gap:28px;align-items:center;font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-2)}
+.hints span{display:flex;gap:8px;align-items:center}
+.kc{min-width:32px;height:32px;padding:0 10px;display:inline-grid;place-items:center;border:1px solid var(--apx-fg-3);border-bottom-width:3px;border-radius:2px;font-size:15px;font-weight:700;letter-spacing:.04em;color:var(--apx-fg);line-height:1}
+.kc svg.i{font-size:16px}
+.kc.focus{border-color:var(--apx-fg)}
+.kc.listen{border-color:var(--apx-brand);color:var(--apx-brand)}
+.kc.lost{border-color:var(--apx-red);color:var(--apx-fg-3)}
+.ver{font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-3)}
+.sample{font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--apx-fg-3);border:1px dashed var(--apx-line-strong);padding:6px 12px}
+
+/* ====================== SHEET · tokens & states ====================== */
+.sheet{width:1920px;padding:72px 96px 96px;background:var(--apx-ink-900);border-top:1px solid var(--apx-line)}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--apx-line);padding-bottom:24px;margin-bottom:32px}
+.sheet-head h1{font-size:56px;font-weight:800;line-height:.95;text-transform:uppercase}
+.sheet-head p{font-family:var(--font-text);font-size:19px;line-height:1.45;color:var(--apx-fg-2);max-width:760px;margin-top:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:var(--apx-ink-850);padding:24px;border-top:2px solid var(--apx-line-strong)}
+.card.w2{grid-column:span 2}
+.card h3{font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-3);text-transform:uppercase;margin-bottom:18px}
+.sw{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.sw div{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--apx-fg-2);line-height:1.3}
+.sw i{display:block;height:44px;margin-bottom:6px;background:var(--c);border:1px solid var(--apx-line)}
+.specimen p{line-height:1.15;margin-bottom:10px}
+.tab-demo{display:inline-grid;gap:2px;font-size:28px;font-weight:700;text-align:right;margin-top:6px}
+.states{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.stack{display:flex;flex-direction:column;gap:12px}
+.cap{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--apx-fg-3);margin-top:6px;text-transform:uppercase}
+.lights{width:360px;height:138px;background:rgba(5,6,8,.92);padding:16px;display:flex;gap:12px}
+.pod{width:56px;height:106px;background:#0E0F12;padding:8px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.lamp{width:40px;height:40px;border-radius:50%;background:var(--apx-lamp-off);border:3px solid transparent}
+.lamp.on{background:var(--apx-lamp-on);border-color:#FF7A72}
+.mini-banner{position:relative;left:auto;top:auto;transform:none;min-width:0}
+.ctrl-row{display:grid;grid-template-columns:200px 1fr;align-items:center;height:56px;padding:0 16px 0 32px;position:relative;font-size:20px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.ctrl-row.focus{background:var(--apx-row-hi)}
+.ctrl-row>:last-child{justify-self:start}
+.seg{display:inline-flex;border:1px solid var(--apx-line-strong)}
+.seg span{width:96px;height:40px;display:grid;place-items:center;font-size:18px;font-weight:600;letter-spacing:.06em;color:var(--apx-fg-2)}
+.seg span.on{background:var(--apx-fg);color:var(--apx-on-fill)}
+.slider{display:flex;align-items:center;gap:16px}
+.slider .tr{width:280px;height:4px;background:var(--apx-line-strong);position:relative}
+.slider .tr i{position:absolute;inset:0;background:var(--apx-fg);transform-origin:left;transform:scaleX(.75)}
+.slider .tr b{position:absolute;left:75%;top:50%;width:6px;height:24px;background:var(--apx-brand);transform:translate(-50%,-50%)}
+.slider .v{width:48px;text-align:right;font-size:20px;font-weight:600}
+.stepper{display:flex;align-items:center;justify-content:space-between;width:280px}
+.stepper .val{font-size:20px;font-weight:600;letter-spacing:.06em}
+.stepper .ix{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.stepper .ix i{width:6px;height:2px;background:var(--apx-line-strong)} .stepper .ix i.on{background:var(--apx-fg)}
+.stepper svg.i{font-size:16px;color:var(--apx-fg-2)}
+.mfd{width:100%;background:var(--apx-panel);padding:0 20px 16px}
+.mfd-head{display:flex;justify-content:space-between;align-items:center;height:48px;border-bottom:1px solid var(--apx-line)}
+.ticks{display:flex;gap:6px}
+.ticks i{width:18px;height:4px;background:var(--apx-line-strong);transform:skewX(-12deg)} .ticks i.on{background:var(--apx-fg)}
+.mfd-row{display:grid;grid-template-columns:44px 1fr auto;align-items:center;height:52px;border-bottom:1px solid var(--apx-line);font-size:20px;font-weight:600;letter-spacing:.04em}
+.fb{background:var(--apx-panel);padding:14px 20px}
+.fb-top{display:flex;justify-content:space-between;align-items:baseline}
+.fb-track{height:24px;margin:12px 0;position:relative;background:repeating-linear-gradient(90deg,var(--apx-line-strong) 0 1px,transparent 1px calc(100%/15));border-bottom:1px solid var(--apx-line-strong)}
+.fb-track .gone{position:absolute;top:0;bottom:0;right:0;width:30.7%;background:rgba(242,244,247,.30)}
+.fb-track .head{position:absolute;top:-6px;bottom:-2px;left:69.3%;width:3px;background:var(--apx-fg)}
+.fb-track .head::before{content:'';position:absolute;left:-5px;top:-8px;width:13px;height:8px;background:var(--apx-fg);clip-path:polygon(0 0,100% 0,62% 100%,38% 100%)}
+.res{width:100%;border-collapse:collapse;font-size:20px;font-weight:600}
+.res th{font-size:13px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-3);text-align:left;height:40px;border-bottom:1px solid var(--apx-line-strong)}
+.res td{height:40px;border-bottom:1px solid var(--apx-line)}
+.res .r{text-align:right} .res .c{text-align:center}
+.res .p{font-size:22px;font-weight:800;text-align:center;width:56px}
+.res .st{width:4px;padding:0;background:var(--team)}
+.res .nm{padding-left:14px;font-weight:700;text-transform:uppercase}
+.res .nm small{font-size:13px;color:var(--apx-fg-3);letter-spacing:.08em;margin-left:8px}
+.res .tm{font-size:14px;letter-spacing:.08em;color:var(--apx-fg-2);text-transform:uppercase}
+.res tr.me{background:var(--apx-row-hi)}
+.res .fl{color:var(--apx-purple)}
+.res .pen{color:var(--apx-red)}
+.tip{background:var(--apx-panel);padding:20px 24px}
+.tip p{font-family:var(--font-text);font-size:22px;line-height:1.4;color:var(--apx-fg);margin-top:10px}
+.progress{height:4px;background:var(--apx-line);margin-top:20px;position:relative}
+.progress i{position:absolute;inset:0;background:var(--apx-brand);transform-origin:left;transform:scaleX(.62)}
+.tile{width:300px;height:176px;background:var(--apx-panel-raised);position:relative;padding:20px 20px 18px 30px;display:flex;flex-direction:column;justify-content:flex-end}
+.tile .bar{position:absolute;left:0;right:0;top:0;height:6px;background:var(--team)}
+.tile h4{font-size:24px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.tile p{font-size:14px;font-weight:600;letter-spacing:.10em;color:var(--apx-fg-2);margin-top:8px}
+.tile.focus{outline:2px solid var(--apx-fg);outline-offset:0;transform:translateY(-4px)}
+.wm-big{height:96px;width:auto;display:block}
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite: 24-grid, 2px stroke, square caps, currentColor (DESIGN §6.16) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 5l8 12H4z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 19L4 7h16z"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 20V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M20 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8.5 6 11.5a6 6 0 0 1-12 0C6 11.5 8 8 12 3z"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V3M5 4h12l-3 4 3 4H5"/></symbol>
+  <symbol id="i-stopwatch" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4M9 2h6M19 5l-2 2"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l9 18H3z"/><path d="M12 10v5M12 17v1"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M12 11v6M12 7v1"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L5 14h6l-1 8 8-12h-6z"/></symbol>
+</svg>
+
+<!-- ================================================================
+     FRAME 1 · In-race HUD · 1920×1080 · k = 1 · Örnek veri
+     ================================================================ -->
+<section class="frame hud" id="hud-frame" aria-label="Yarış içi HUD önizlemesi">
+  <div class="scene" aria-hidden="true">
+    <div class="grass"></div><div class="grass r"></div>
+    <div class="road"></div><div class="line-l"></div><div class="line-r"></div><div class="kerb"></div>
+    <div class="ph">OYUN SAHNESİ YER TUTUCU<small>WEBGL CANVAS · THREE.JS · YAKIN TAKİP KAMERASI</small></div>
+  </div>
+
+  <!-- Tower: expanded, gap mode = interval -->
+  <div class="tower" aria-label="Sıralama kulesi">
+    <div class="tower-head up"><span>sıralama · <b>aralık</b></span></div>
+    <div class="tower-body">
+      <div class="row" style="--team:var(--apx-team-aurora)"><span class="pos num">1</span><span class="strip"></span><span></span><span class="code">NRB</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap up">lider</span></div>
+      <div class="row" style="--team:var(--apx-team-vortex)"><span class="pos num">2</span><span class="strip"></span><span></span><span class="code">ASH</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+1.204</span></div>
+      <div class="row" style="--team:var(--apx-team-solaris)"><span class="pos num"><svg class="i fill chg up"><use href="#i-up"/></svg>3</span><span class="strip"></span><span></span><span class="code">MOR</span><span class="tyre" style="--c:var(--apx-tyre-soft)">S</span><span></span><span class="badge"><span class="b-drs">DRS</span></span><span class="gap num">+0.611</span></div>
+      <div class="row me" style="--team:var(--apx-team-anka)"><span class="pos num">4</span><span class="strip"></span><span></span><span class="code">AYD</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"><span class="b-drs">DRS</span></span><span class="gap num">+0.874</span></div>
+      <div class="row" style="--team:var(--apx-team-kestrel)"><span class="pos num"><svg class="i fill chg dn"><use href="#i-down"/></svg>5</span><span class="strip"></span><span></span><span class="code">GRA</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"><svg class="i b-fl"><use href="#i-clock"/></svg></span><span class="gap num">+2.316</span></div>
+      <div class="row" style="--team:var(--apx-team-meridian)"><span class="pos num">6</span><span class="strip"></span><span></span><span class="code">ORT</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+0.402</span></div>
+      <div class="row" style="--team:var(--apx-team-aurora)"><span class="pos num">7</span><span class="strip"></span><span></span><span class="code">VIR</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+1.958</span></div>
+      <div class="row" style="--team:var(--apx-team-vortex)"><span class="pos num">8</span><span class="strip"></span><span></span><span class="code">MEN</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"></span><span class="gap num">+3.117</span></div>
+      <div class="row" style="--team:var(--apx-team-anka)"><span class="pos num">9</span><span class="strip"></span><span></span><span class="code">ARS</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+0.733</span></div>
+      <div class="row" style="--team:var(--apx-team-solaris)"><span class="pos num">10</span><span class="strip"></span><span></span><span class="code">LAM</span><span class="tyre" style="--c:var(--apx-tyre-soft)">S</span><span></span><span class="badge"><span class="b-pen num">+5</span></span><span class="gap num">+1.540</span></div>
+      <div class="row" style="--team:var(--apx-team-titan)"><span class="pos num">11</span><span class="strip"></span><span></span><span class="code">HAL</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"></span><span class="gap num">+2.071</span></div>
+      <div class="row" style="--team:var(--apx-team-zephyr)"><span class="pos num">12</span><span class="strip"></span><span></span><span class="code">DUV</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+0.995</span></div>
+      <div class="row inpit" style="--team:var(--apx-team-kestrel)"><span class="pos num">13</span><span class="strip"></span><span></span><span class="code">MRT</span><span class="tyre" style="--c:var(--apx-tyre-soft)">S</span><span></span><span class="badge"></span><span class="gap"><span class="pit-chip up">pit</span></span></div>
+      <div class="row" style="--team:var(--apx-team-meridian)"><span class="pos num">14</span><span class="strip"></span><span></span><span class="code">FIS</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"></span><span class="gap num">+4.380</span></div>
+      <div class="row" style="--team:var(--apx-team-ironclad)"><span class="pos num">15</span><span class="strip"></span><span></span><span class="code">WHI</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+1.121</span></div>
+      <div class="row" style="--team:var(--apx-team-titan)"><span class="pos num">16</span><span class="strip"></span><span></span><span class="code">PET</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"></span><span class="gap num">+0.689</span></div>
+      <div class="row" style="--team:var(--apx-team-zephyr)"><span class="pos num">17</span><span class="strip"></span><span></span><span class="code">RUI</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap num">+2.844</span></div>
+      <div class="row" style="--team:var(--apx-team-nova)"><span class="pos num">18</span><span class="strip"></span><span></span><span class="code">MRE</span><span class="tyre" style="--c:var(--apx-tyre-soft)">S</span><span></span><span class="badge"></span><span class="gap num">+1.307</span></div>
+      <div class="row" style="--team:var(--apx-team-ironclad)"><span class="pos num">19</span><span class="strip"></span><span></span><span class="code">CLE</span><span class="tyre" style="--c:var(--apx-tyre-hard)">H</span><span></span><span class="badge"></span><span class="gap num up">+1 tur</span></div>
+      <div class="row out" style="--team:var(--apx-team-nova)"><span class="pos num">20</span><span class="strip"></span><span></span><span class="code">PAR</span><span class="tyre" style="--c:var(--apx-tyre-medium)">M</span><span></span><span class="badge"></span><span class="gap">DNF</span></div>
+    </div>
+  </div>
+
+  <!-- Notification: fastest lap (purple) -->
+  <div class="banner" style="--lvl:var(--apx-purple)" role="status">
+    <span class="stripe"></span><svg class="i ic"><use href="#i-clock"/></svg>
+    <span class="title up">en hızlı tur</span><span class="div"></span>
+    <span class="detail num"><span class="code-strip" style="--team:var(--apx-team-kestrel)"></span>GRA · 1:25.612</span>
+  </div>
+
+  <!-- Timing panel -->
+  <div class="timing" aria-label="Zamanlama">
+    <div class="t-a">
+      <div class="t-pos">P4<small class="num">/20</small></div>
+      <div class="t-lap"><span class="lbl15 up">tur</span><span class="v num">12<small>/29</small></span></div>
+    </div>
+    <div class="t-b">
+      <span class="t-cur num">1:05.318</span>
+      <span class="delta faster num">−0.214</span>
+    </div>
+    <div class="t-c">
+      <div><span class="lbl up">son tur</span><span class="v num">1:26.104</span></div>
+      <div><span class="lbl up">en iyi</span><span class="v num">1:25.890</span></div>
+    </div>
+    <div class="sectors">
+      <div class="sec"><div class="bar green"></div><div class="meta"><span class="lbl">S1</span><span class="v num">28.412</span></div></div>
+      <div class="sec"><div class="bar purple"></div><div class="meta"><span class="lbl">S2</span><span class="v num">30.987</span></div></div>
+      <div class="sec"><div class="bar live"></div><div class="meta"><span class="lbl" style="color:var(--apx-fg)">S3</span><span class="v none">—</span></div></div>
+    </div>
+  </div>
+
+  <!-- Bottom-left group: weather, minimap, tyres -->
+  <div class="bl">
+    <div class="wx">
+      <span><span class="lbl up">hava</span><span class="v num">24°C</span></span>
+      <span><span class="lbl up">pist</span><span class="v num">38°C</span></span>
+      <span><span class="lbl up">ıslaklık</span><span class="v num">%0</span></span>
+      <svg class="i ic"><use href="#i-drop"/></svg>
+    </div>
+    <div class="bl-row">
+      <div class="minimap" aria-label="Mini harita">
+        <svg viewBox="-604 -1251 1596 1401" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path d="M0 0L156 -29L208 -41L216 -44L226 -50L232 -59L233 -71L230 -86L213 -146L209 -164L207 -185L210 -218L217 -241L230 -262L247 -280L282 -306L338 -337L384 -356L419 -368L462 -378L505 -385L546 -388L603 -388L650 -383L662 -384L672 -386L682 -390L692 -396L709 -411L715 -419L722 -437L725 -457L725 -467L713 -541L715 -552L719 -557L726 -560L804 -557L850 -558L859 -560L864 -562L872 -571L875 -577L876 -588L866 -645L863 -656L860 -661L848 -674L837 -681L461 -869L447 -879L440 -887L436 -895L434 -903L434 -912L436 -920L440 -927L453 -942L474 -955L496 -963L507 -965L531 -966L550 -963L659 -941L700 -931L782 -909L802 -906L810 -907L819 -910L851 -928L889 -946L897 -952L904 -958L912 -973L930 -1031L932 -1047L930 -1055L924 -1069L910 -1093L889 -1123L857 -1157L831 -1179L822 -1185L812 -1189L801 -1191L775 -1191L762 -1189L267 -1043L258 -1039L252 -1035L245 -1024L243 -1018L244 -1011L258 -991L272 -964L277 -945L275 -926L187 -653L140 -504L132 -483L123 -464L108 -442L99 -433L85 -424L-14 -366L-179 -279L-526 -91L-536 -86L-540 -81L-544 -69L-543 -58L-538 -45L-527 -35L-516 -31L-509 -30L-467 -31L-459 -28L-453 -21L-452 -18L-451 -8L-464 67L-465 76L-463 81L-460 85L-456 89L-450 90L-441 90Z" fill="none" stroke="#0A0C0F" stroke-opacity=".6" stroke-width="7" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+          <path d="M-452 -18L-438 58L-432 67L-427 70L-417 71L140 -41L154 -45L179 -53L187 -58L196 -64L203 -72L212 -89L213 -100L213 -110L200 -165L199 -186L199 -196L202 -207L205 -216L214 -231" fill="none" stroke="#F2F4F7" stroke-opacity=".3" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/>
+          <path d="M0 0L156 -29L208 -41L216 -44L226 -50L232 -59L233 -71L230 -86L213 -146L209 -164L207 -185L210 -218L217 -241L230 -262L247 -280L282 -306L338 -337L384 -356L419 -368L462 -378L505 -385L546 -388L603 -388L650 -383L662 -384L672 -386L682 -390L692 -396L709 -411L715 -419L722 -437L725 -457L725 -467L713 -541L715 -552L719 -557L726 -560L804 -557L850 -558L859 -560L864 -562L872 -571L875 -577L876 -588L866 -645L863 -656L860 -661L848 -674L837 -681L461 -869L447 -879L440 -887L436 -895L434 -903L434 -912L436 -920L440 -927L453 -942L474 -955L496 -963L507 -965L531 -966L550 -963L659 -941L700 -931L782 -909L802 -906L810 -907L819 -910L851 -928L889 -946L897 -952L904 -958L912 -973L930 -1031L932 -1047L930 -1055L924 -1069L910 -1093L889 -1123L857 -1157L831 -1179L822 -1185L812 -1189L801 -1191L775 -1191L762 -1189L267 -1043L258 -1039L252 -1035L245 -1024L243 -1018L244 -1011L258 -991L272 -964L277 -945L275 -926L187 -653L140 -504L132 -483L123 -464L108 -442L99 -433L85 -424L-14 -366L-179 -279L-526 -91L-536 -86L-540 -81L-544 -69L-543 -58L-538 -45L-527 -35L-516 -31L-509 -30L-467 -31L-459 -28L-453 -21L-452 -18L-451 -8L-464 67L-465 76L-463 81L-460 85L-456 89L-450 90L-441 90Z" fill="none" stroke="#F2F4F7" stroke-opacity=".85" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+          <path d="M-352 72L-339 69L-327 67L-315 64L-302 62L-290 59L-277 57L-265 54L-252 51L-240 49L-227 46L-215 44L-202 41L-190 39L-177 36L-165 34L-152 31L-140 29L-127 26L-115 23L-102 21L-90 18L-78 16L-65 13L-53 11L-40 8L-28 6L-15 3L-3 1L10 -2L22 -4L35 -7L47 -9L60 -11L72 -14L85 -16L97 -18L110 -21L122 -23L135 -26L147 -28" fill="none" stroke="#2ED16B" stroke-opacity=".75" stroke-width="3" vector-effect="non-scaling-stroke"/>
+          <path d="M245 -833L237 -807L228 -782L220 -756L212 -730L203 -705L195 -679L187 -653L179 -627L171 -602L162 -576L154 -550L146 -524L138 -499L128 -474L114 -451L96 -431L73 -416L50 -403L26 -389L3 -376L-21 -363L-44 -350L-68 -337L-92 -325L-116 -312L-140 -300L-164 -287L-188 -274L-211 -261L-235 -249L-259 -236L-283 -223L-306 -210L-330 -197L-354 -184L-378 -172L-401 -159L-425 -146L-449 -133L-473 -120" fill="none" stroke="#2ED16B" stroke-opacity=".75" stroke-width="3" vector-effect="non-scaling-stroke"/>
+          <!-- S/F (chequered) and sector ticks -->
+          <line x1="-8.6" y1="-44.2" x2="8.6" y2="44.2" stroke="#0A0C0F" stroke-width="46"/>
+          <line x1="-8.6" y1="-44.2" x2="8.6" y2="44.2" stroke="#F2F4F7" stroke-width="46" stroke-dasharray="15 15"/>
+          <line x1="599.6" y1="-748.9" x2="640.4" y2="-829.1" stroke="#949EAB" stroke-width="2" vector-effect="non-scaling-stroke"/>
+          <line x1="287.8" y1="-819.1" x2="202.2" y2="-846.9" stroke="#949EAB" stroke-width="2" vector-effect="non-scaling-stroke"/>
+          <!-- cars (Örnek veri): team colour dots; pit car at 50%; player last -->
+          <g stroke="#0A0C0F" stroke-width="1.5" vector-effect="non-scaling-stroke">
+            <circle cx="931" cy="-1051" r="34" fill="#F2F4F7" vector-effect="non-scaling-stroke"/>
+            <circle cx="890" cy="-1120" r="34" fill="#FF6FB5" vector-effect="non-scaling-stroke"/>
+            <circle cx="742" cy="-1183" r="34" fill="#9AA4AE" vector-effect="non-scaling-stroke"/>
+            <circle cx="701" cy="-1171" r="34" fill="#FFE01A" vector-effect="non-scaling-stroke"/>
+            <circle cx="634" cy="-1151" r="34" fill="#14B8A6" vector-effect="non-scaling-stroke"/>
+            <circle cx="213" cy="-110" r="34" fill="#6478F0" opacity=".5" vector-effect="non-scaling-stroke"/>
+            <circle cx="261" cy="-986" r="34" fill="#FF6FB5" vector-effect="non-scaling-stroke"/>
+            <circle cx="276" cy="-927" r="34" fill="#9AA4AE" vector-effect="non-scaling-stroke"/>
+            <circle cx="236" cy="-805" r="34" fill="#FF7A1A" vector-effect="non-scaling-stroke"/>
+            <circle cx="207" cy="-714" r="34" fill="#E8213F" vector-effect="non-scaling-stroke"/>
+            <circle cx="193" cy="-671" r="34" fill="#3DF06A" vector-effect="non-scaling-stroke"/>
+            <circle cx="134" cy="-487" r="34" fill="#2AA4FF" vector-effect="non-scaling-stroke"/>
+            <circle cx="51" cy="-404" r="34" fill="#14B8A6" vector-effect="non-scaling-stroke"/>
+            <circle cx="29" cy="-391" r="34" fill="#6478F0" vector-effect="non-scaling-stroke"/>
+            <circle cx="324" cy="-329" r="34" fill="#FFE01A" vector-effect="non-scaling-stroke"/>
+            <circle cx="-145" cy="-297" r="34" fill="#FF7A1A" vector-effect="non-scaling-stroke"/>
+            <circle cx="-178" cy="-279" r="34" fill="#3DF06A" vector-effect="non-scaling-stroke"/>
+            <circle cx="-244" cy="-244" r="34" fill="#2AA4FF" vector-effect="non-scaling-stroke"/>
+          </g>
+          <circle cx="-97" cy="-322" r="50" fill="#F2F4F7" stroke="#E8213F" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </div>
+      <div class="tyres" aria-label="Lastikler">
+        <div class="ty-head"><span class="ring28" style="--c:var(--apx-tyre-medium)">M</span><span class="t up">orta<small class="num up">9 tur</small></span></div>
+        <div class="ty-grid">
+          <div class="ty" style="--s:var(--apx-temp-ok)"><span class="g"></span><span class="vals"><span class="w num">18</span><span class="tc num">98°</span></span></div>
+          <div class="ty" style="--s:var(--apx-temp-hot)"><span class="g"></span><span class="vals"><span class="w num">21</span><span class="tc num">127°</span></span></div>
+          <div class="ty" style="--s:var(--apx-temp-ok)"><span class="g"></span><span class="vals"><span class="w num">14</span><span class="tc num">101°</span></span></div>
+          <div class="ty" style="--s:var(--apx-temp-cold)"><span class="g"></span><span class="vals"><span class="w num">16</span><span class="tc num">83°</span></span></div>
+        </div>
+        <div class="lbl ty-cap up">aşınma % · °c</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wheel module -->
+  <div class="wheel" aria-label="Direksiyon ekranı">
+    <div class="leds" aria-label="Vites ışıkları 11/15">
+      <i class="led g"></i><i class="led g"></i><i class="led g"></i><i class="led g"></i><i class="led g"></i>
+      <i class="led r"></i><i class="led r"></i><i class="led r"></i><i class="led r"></i><i class="led r"></i>
+      <i class="led b"></i><i class="led"></i><i class="led"></i><i class="led"></i><i class="led"></i>
+    </div>
+    <div class="w-mid">
+      <div class="speed"><span class="v num">287</span><span class="lbl up">km/sa</span></div>
+      <div class="gear">7</div>
+      <div class="w-right">
+        <span class="chip drs-available"><span>DRS</span></span>
+        <span class="bias"><span class="lbl up">fren</span><span class="v num">%57,5</span></span>
+      </div>
+    </div>
+    <div class="ers">
+      <span class="lbl">ERS</span>
+      <span class="track"><i class="fill" style="--soc:.62"></i><span class="used" style="--lap:.41"><i></i></span></span>
+      <span class="v num">%62</span>
+      <span class="ers-mode up"><span>orta</span></span>
+    </div>
+  </div>
+
+  <div class="sample-tag up">örnek veri · hud sözleşme önizlemesi · 1920×1080 · hud.scale 1,00</div>
+</section>
+
+<!-- ================================================================
+     FRAME 2 · Main menu over the 3D showroom · 1920×1080 · Örnek veri
+     ================================================================ -->
+<section class="frame menu" id="menu-frame" aria-label="Ana menü önizlemesi">
+  <div class="showroom" aria-hidden="true">
+    <div class="light"></div><div class="floor"></div><div class="turntable"></div>
+    <div class="ph">3B SHOWROOM YER TUTUCU<small><span lang="en">ANKA RACING</span> · #7 · PARLAK BOYA · DÖNER TABLA</small></div>
+  </div>
+  <div class="scrim"></div>
+
+  <header class="m-top">
+    <svg class="wm" viewBox="0 0 474 120" role="img" aria-label="APEX GP">
+      <polygon points="0,110 28,10 48,10 76,110 56,110 38,46 20,110" fill="#F2F4F7"/>
+      <polygon points="31.2,100 35,82 45,82 41.2,100" fill="#FF4B1F"/>
+      <text x="82" y="110" font-family="Barlow Condensed" font-weight="800" font-size="143" letter-spacing="-1.4" fill="#F2F4F7">PEX</text>
+      <polygon points="323,10 473,10 452,110 302,110" fill="#FF4B1F"/>
+      <text x="387.5" y="100" text-anchor="middle" font-family="Barlow Condensed" font-weight="800" font-size="115" letter-spacing="-1.1" fill="#0A0C0F">GP</text>
+    </svg>
+    <div class="lang"><span class="on">TR</span><span>EN</span><span class="ver">v0.1 · SPRINT 0</span></div>
+  </header>
+
+  <nav class="m-nav" aria-label="Ana menü">
+    <p class="eyebrow up">ana menü</p>
+    <ul role="listbox" aria-activedescendant="mi-tt">
+      <li class="navrow is-focus" id="mi-tt" role="option" aria-selected="true"><span class="notch"></span>Zamana karşı<span class="meta">İSTANBUL CIRCUIT</span></li>
+      <li class="navrow" role="option" aria-selected="false">Hızlı yarış<span class="meta">20 ARAÇ</span></li>
+      <li class="navrow" role="option" aria-selected="false">Ayarlar</li>
+      <li class="navrow" role="option" aria-selected="false">Jenerik</li>
+    </ul>
+    <p class="m-desc">İstanbul Circuit'te kendi hayaletine karşı tur at. Kişisel en iyini sektör sektör geliştir.</p>
+  </nav>
+
+  <aside class="m-card" aria-label="Pist bilgisi">
+    <p class="lbl up">pist · zamana karşı</p>
+    <h2>İSTANBUL CIRCUIT</h2>
+    <p class="facts num">5,349 KM · 14 VİRAJ · SAAT YÖNÜNÜN TERSİ</p>
+    <div class="pb"><span class="lbl15 up">kişisel en iyi</span><span class="v num">1:25.612</span></div>
+    <div class="sectors">
+      <div class="sec"><div class="bar green"></div><div class="meta"><span class="lbl">S1</span><span class="v num">28.204</span></div></div>
+      <div class="sec"><div class="bar purple"></div><div class="meta"><span class="lbl">S2</span><span class="v num">30.871</span></div></div>
+      <div class="sec"><div class="bar yellow"></div><div class="meta"><span class="lbl">S3</span><span class="v num">26.537</span></div></div>
+    </div>
+  </aside>
+
+  <footer class="m-bar">
+    <div class="hints">
+      <span><span class="kc"><svg class="i"><use href="#i-arrow-up"/></svg></span><span class="kc"><svg class="i"><use href="#i-arrow-down"/></svg></span><span class="up">gezin</span></span>
+      <span><span class="kc">ENTER</span><span class="up">seç</span></span>
+      <span><span class="kc">ESC</span><span class="up">geri</span></span>
+    </div>
+    <span class="sample up">örnek veri</span>
+  </footer>
+</section>
+
+<!-- ================================================================
+     SHEET · tokens, type and component states (Örnek veri)
+     ================================================================ -->
+<section class="sheet" aria-label="Sözleşme önizleme sayfası">
+  <div class="sheet-head">
+    <div>
+      <h1>APEX GP · sözleşme önizlemesi</h1>
+      <p>Yön: “pit duvarı yayını”. Grafit paneller, beyaz dar büyük harf, tablo rakamlar. Renk yalnızca anlam taşır. Kaynak: <b>docs/design/DESIGN.md</b>. Sayfadaki tüm değerler örnek veridir.</p>
+    </div>
+    <svg class="wm-big" viewBox="0 0 474 120" role="img" aria-label="APEX GP">
+      <polygon points="0,110 28,10 48,10 76,110 56,110 38,46 20,110" fill="#F2F4F7"/>
+      <polygon points="31.2,100 35,82 45,82 41.2,100" fill="#FF4B1F"/>
+      <text x="82" y="110" font-family="Barlow Condensed" font-weight="800" font-size="143" letter-spacing="-1.4" fill="#F2F4F7">PEX</text>
+      <polygon points="323,10 473,10 452,110 302,110" fill="#FF4B1F"/>
+      <text x="387.5" y="100" text-anchor="middle" font-family="Barlow Condensed" font-weight="800" font-size="115" letter-spacing="-1.1" fill="#0A0C0F">GP</text>
+    </svg>
+  </div>
+
+  <div class="cards">
+    <div class="card w2">
+      <h3>Renk · anlam tokenları</h3>
+      <div class="sw">
+        <div><i style="--c:#0A0C0F"></i>ink-900<br>#0A0C0F</div>
+        <div><i style="--c:rgba(9,11,14,.88)"></i>panel .88</div>
+        <div><i style="--c:#F2F4F7"></i>fg<br>#F2F4F7</div>
+        <div><i style="--c:#B4BCC7"></i>fg-2<br>#B4BCC7</div>
+        <div><i style="--c:#949EAB"></i>fg-3<br>#949EAB</div>
+        <div><i style="--c:#FF4B1F"></i>brand (menü)<br>#FF4B1F</div>
+        <div><i style="--c:#B470FF"></i>mor · en iyi<br>#B470FF</div>
+        <div><i style="--c:#2ED16B"></i>yeşil · kişisel<br>#2ED16B</div>
+        <div><i style="--c:#FFD019"></i>sarı · yavaş<br>#FFD019</div>
+        <div><i style="--c:#FF5C5C"></i>kırmızı · ceza<br>#FF5C5C</div>
+        <div><i style="--c:#5C8FFF"></i>mavi · bayrak<br>#5C8FFF</div>
+        <div><i style="--c:#FFB21A"></i>amber · ERS<br>#FFB21A</div>
+      </div>
+      <h3 style="margin-top:22px">Takım şeritleri (ui)</h3>
+      <div class="sw" style="grid-template-columns:repeat(10,1fr)">
+        <div lang="en"><i style="--c:#E8213F"></i>Anka</div><div lang="en"><i style="--c:#2AA4FF"></i>Aurora</div><div lang="en"><i style="--c:#3DF06A"></i>Vortex</div>
+        <div lang="en"><i style="--c:#FF7A1A"></i>Solaris</div><div lang="en"><i style="--c:#6478F0"></i>Kestrel</div><div lang="en"><i style="--c:#14B8A6"></i>Meridian</div>
+        <div lang="en"><i style="--c:#9AA4AE"></i>Titan</div><div lang="en"><i style="--c:#FF6FB5"></i>Zephyr</div><div lang="en"><i style="--c:#FFE01A"></i>Ironclad</div><div lang="en"><i style="--c:#F2F4F7"></i>Nova</div>
+      </div>
+    </div>
+
+    <div class="card specimen">
+      <h3>Tipografi · Barlow Condensed + Barlow (OFL)</h3>
+      <p style="font-size:44px;font-weight:800" class="up">pist sınırları</p>
+      <p style="font-size:30px;font-weight:700;letter-spacing:.02em" class="up">en iyi tur · sektör · pit · ceza</p>
+      <p style="font-size:20px;font-weight:600;letter-spacing:.06em">İ ı Ş ş Ğ ğ Ç ç Ö ö Ü ü · ₺ · %57,5</p>
+      <p style="font-family:var(--font-text);font-size:19px;line-height:1.45;color:var(--apx-fg-2)">Fren noktanı bir sonraki turda beş metre geciktir; çıkışta ıslak çizgiye dikkat et.</p>
+      <div class="tab-demo num"><span>1:11.111</span><span>1:25.612</span><span>−0.214</span><span>+0.874</span></div>
+      <p class="cap">tabular rakam · U+2212 eksi · sabit genişlik</p>
+    </div>
+
+    <div class="card">
+      <h3>Start ışıkları · 3 yandı / ışıklar söndü</h3>
+      <div class="stack">
+        <div class="lights" aria-label="Start ışıkları 3 yanık"><div class="pod"><i class="lamp on"></i><i class="lamp on"></i></div><div class="pod"><i class="lamp on"></i><i class="lamp on"></i></div><div class="pod"><i class="lamp on"></i><i class="lamp on"></i></div><div class="pod"><i class="lamp"></i><i class="lamp"></i></div><div class="pod"><i class="lamp"></i><i class="lamp"></i></div></div>
+        <div class="lights" aria-label="Işıklar söndü"><div class="pod"><i class="lamp"></i><i class="lamp"></i></div><div class="pod"><i class="lamp"></i><i class="lamp"></i></div><div class="pod"><i class="lamp"></i><i class="lamp"></i></div><div class="pod"><i class="lamp"></i><i class="lamp"></i></div><div class="pod"><i class="lamp"></i><i class="lamp"></i></div></div>
+      </div>
+      <p class="cap">dış parıltı yok · söndüğünde aynı karede</p>
+    </div>
+
+    <div class="card hud" style="position:relative">
+      <h3>Bildirim seviyeleri</h3>
+      <div class="stack">
+        <div class="banner mini-banner" style="--lvl:var(--apx-green)"><span class="stripe"></span><svg class="i ic"><use href="#i-clock"/></svg><span class="title up">kişisel en iyi</span><span class="div"></span><span class="detail num">1:25.890</span></div>
+        <div class="banner mini-banner" style="--lvl:var(--apx-amber)"><span class="stripe"></span><svg class="i ic"><use href="#i-warn"/></svg><span class="title up">pist sınırları 2/3</span><span class="div"></span><span class="detail up">t9</span></div>
+        <div class="banner mini-banner" style="--lvl:var(--apx-red)"><span class="stripe"></span><svg class="i ic"><use href="#i-stopwatch"/></svg><span class="title up">erken kalkış</span><span class="div"></span><span class="detail"><span class="b-pen num" style="height:24px;font-size:15px">+5 SN</span></span></div>
+        <div class="banner mini-banner" style="--lvl:var(--apx-yellow)"><span class="stripe"></span><svg class="i ic"><use href="#i-flag"/></svg><span class="title up">sarı bayrak</span><span class="div"></span><span class="detail up">sektör 3</span></div>
+        <div class="banner mini-banner" style="--lvl:var(--apx-fg)"><span class="stripe"></span><svg class="i ic"><use href="#i-info"/></svg><span class="title">DRS <span class="up">etkin</span></span></div>
+      </div>
+    </div>
+
+    <div class="card hud" style="position:relative">
+      <h3>DRS · ERS · pit limitörü · lastik</h3>
+      <div class="states">
+        <span class="chip drs-unavailable"><span>DRS</span></span><span class="chip drs-available"><span>DRS</span></span><span class="chip drs-open"><span>DRS</span></span><span class="chip drs-disabled"><span>DRS</span></span><span class="chip pit-on up"><span>pit</span></span>
+      </div>
+      <p class="cap">kullanılamaz · hazır · açık · devre dışı · pit limitörü (kapalı = gizli)</p>
+      <div class="states" style="margin-top:16px">
+        <span class="ers-mode none up"><span>kapalı</span></span><span class="ers-mode up"><span>orta</span></span><span class="ers-mode up"><span>hızlı tur</span></span><span class="ers-mode ot up"><span>sollama</span></span>
+      </div>
+      <div class="states" style="margin-top:18px">
+        <span class="ring28" style="--c:var(--apx-tyre-soft)">S</span><span class="ring28" style="--c:var(--apx-tyre-medium)">M</span><span class="ring28" style="--c:var(--apx-tyre-hard)">H</span><span class="ring28" style="--c:var(--apx-tyre-inter)">I</span><span class="ring28" style="--c:var(--apx-tyre-wet)">W</span>
+      </div>
+      <p class="cap">yumuşak · orta · sert · ara · yağmur</p>
+      <div class="leds" style="justify-content:flex-start;margin-top:16px"><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i><i class="led b"></i></div>
+      <p class="cap">shiftNow = 15 mavi · limitör = 15 kırmızı</p>
+    </div>
+
+    <div class="card hud" style="position:relative">
+      <h3>Sektör çubukları</h3>
+      <div class="sectors" style="grid-template-columns:repeat(5,1fr)">
+        <div class="sec"><div class="bar"></div><div class="meta"><span class="v none">—</span></div></div>
+        <div class="sec"><div class="bar live"></div><div class="meta"><span class="lbl" style="color:var(--apx-fg)">S2</span></div></div>
+        <div class="sec"><div class="bar yellow"></div><div class="meta"><span class="v num">31.204</span></div></div>
+        <div class="sec"><div class="bar green"></div><div class="meta"><span class="v num">30.990</span></div></div>
+        <div class="sec"><div class="bar purple"></div><div class="meta"><span class="v num">30.871</span></div></div>
+      </div>
+      <p class="cap">yok · sürüyor · yavaş · kişisel en iyi · genel en iyi</p>
+      <h3 style="margin-top:22px">Delta</h3>
+      <div class="states"><span class="delta faster num">−0.214</span><span class="delta slower num">+0.348</span></div>
+    </div>
+
+    <div class="card w2">
+      <h3>Ayar satırları · odak, toggle, slider, seçici, tuş çipi</h3>
+      <div class="ctrl-row focus"><span class="notch"></span><span>Hareket efektleri</span><span class="seg"><span>KAPALI</span><span class="on">AÇIK</span></span></div>
+      <div class="ctrl-row"><span>Ana ses</span><span class="slider"><span class="tr"><i></i><b></b></span><span class="v num">75</span></span></div>
+      <div class="ctrl-row"><span>Kalite</span><span><span class="stepper"><svg class="i"><use href="#i-chev-l"/></svg><span class="val">YÜKSEK</span><svg class="i"><use href="#i-chev-r"/></svg></span><span class="stepper ix" style="width:280px"><i></i><i></i><i class="on"></i><i></i></span></span></div>
+      <div class="ctrl-row"><span>Kamera</span><span class="states"><span class="kc">C</span><span class="kc focus">V</span><span class="kc listen up">tuşa bas…</span><span class="kc lost">&nbsp;</span><span class="kc"><svg class="i"><use href="#i-arrow-left"/></svg></span><span class="kc">BOŞLUK</span></span></div>
+      <p class="cap">odaklı satır = açık zemin + vermilyon tepe çentiği · tuş çipleri: varsayılan · odak · dinliyor · alındı</p>
+    </div>
+
+    <div class="card">
+      <h3>Takım kutusu · odak</h3>
+      <div class="states" style="align-items:flex-end">
+        <div class="tile focus" style="--team:var(--apx-team-anka)"><span class="notch" style="top:6px"></span><span class="bar"></span><h4 lang="en">Anka Racing</h4><p class="num">AYD 7 · ARS 34</p></div>
+      </div>
+      <p class="cap">takım adı lang="en" → “RACİNG” hatası yok</p>
+    </div>
+
+    <div class="card hud" style="position:relative">
+      <h3>MFD · strateji sayfası</h3>
+      <div class="mfd">
+        <div class="mfd-head"><span style="font-size:24px;font-weight:700;letter-spacing:.02em" class="up">strateji</span><span class="ticks"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="mfd-row"><span class="kc">1</span><span class="up">pite gir</span><span class="seg"><span class="on">AÇIK</span></span></div>
+        <div class="mfd-row"><span class="kc">2</span><span class="up">sonraki lastik</span><span class="ring28" style="--c:var(--apx-tyre-hard)">H</span></div>
+        <div class="mfd-row" style="border:0"><span class="kc">TAB</span><span class="up" style="color:var(--apx-fg-3)">sonraki sayfa</span><span></span></div>
+      </div>
+    </div>
+
+    <div class="card hud" style="position:relative">
+      <h3>Flashback zaman çizelgesi</h3>
+      <div class="fb">
+        <div class="fb-top"><span><span style="font-size:22px;font-weight:700;letter-spacing:.04em" class="up">geri sar</span> <span class="lbl15 up" style="margin-left:10px">kalan 2</span></span><span class="num" style="font-size:19px;font-weight:700">−4.6 SN</span></div>
+        <div class="fb-track"><span class="gone"></span><span class="head"></span></div>
+        <div class="hints" style="gap:16px"><span><span class="kc"><svg class="i"><use href="#i-arrow-left"/></svg></span><span class="kc"><svg class="i"><use href="#i-arrow-right"/></svg></span><span class="up">sar</span></span><span><span class="kc">ENTER</span><span class="up">uygula</span></span><span><span class="kc">ESC</span><span class="up">iptal</span></span></div>
+      </div>
+    </div>
+
+    <div class="card w2">
+      <h3>Sonuç tablosu · ilk 4 (örnek veri)</h3>
+      <table class="res">
+        <thead><tr><th class="c">POS</th><th></th><th style="padding-left:14px">PİLOT</th><th>TAKIM</th><th class="r">SÜRE / FARK</th><th class="r">EN İYİ TUR</th><th class="c">PİT</th><th class="c">CEZA</th><th class="r">PUAN</th></tr></thead>
+        <tbody>
+          <tr style="--team:var(--apx-team-aurora)"><td class="p num">1</td><td class="st"></td><td class="nm" lang="en">Elias Norberg<small>NRB</small></td><td class="tm" lang="en">Aurora GP</td><td class="r num">42:14.512</td><td class="r num">1:25.701</td><td class="c num">1</td><td class="c"></td><td class="r num" style="font-weight:800">25</td></tr>
+          <tr style="--team:var(--apx-team-vortex)"><td class="p num">2</td><td class="st"></td><td class="nm" lang="en">Tom Ashby<small>ASH</small></td><td class="tm" lang="en">Vortex Motorsport</td><td class="r num">+3.204</td><td class="r num">1:25.744</td><td class="c num">1</td><td class="c"></td><td class="r num" style="font-weight:800">18</td></tr>
+          <tr class="me" style="--team:var(--apx-team-anka)"><td class="p num" style="position:relative"><span class="notch"></span>3</td><td class="st"></td><td class="nm" lang="tr">Kerem Aydın<small>AYD</small></td><td class="tm" lang="en">Anka Racing</td><td class="r num">+5.871</td><td class="r num">1:25.890</td><td class="c num">1</td><td class="c"></td><td class="r num" style="font-weight:800">15</td></tr>
+          <tr style="--team:var(--apx-team-kestrel)"><td class="p num">4</td><td class="st"></td><td class="nm" lang="en">Oliver Grant<small>GRA</small></td><td class="tm" lang="en">Kestrel Racing</td><td class="r num">+9.077</td><td class="r num fl">1:25.612</td><td class="c num">2</td><td class="c pen num">+5 SN</td><td class="r num" style="font-weight:800">12</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Yükleme · ipucu</h3>
+      <div class="tip">
+        <p class="lbl up" style="color:var(--apx-brand)">ipucu</p>
+        <p>Islak pistte yarış çizgisi önce kurur. Ara lastikle çizgide kal, kenarlarda su birikintisi var.</p>
+        <div class="progress"><i></i></div>
+        <p class="lbl up" style="text-align:right;margin-top:10px;font-size:14px">pist yükleniyor · %62</p>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,43 @@
+.m-custom-select { left: 976px; top: 790px; width: 848px; }
+.m-team-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 16px; }
+.m-team-actions .m-btn { min-width: 180px; }
+.m-team-editor .m-team-actions .m-cta { width: auto; min-width: 280px; max-width: 320px; }
+.m-team-editor .m-team-actions .m-btn, .m-team-editor .m-team-actions .m-cta { height: 56px; }  /* save and cancel share one height */
+.m-team-editor { position: absolute; left: 96px; top: 150px; width: 780px; }
+.m-team-editor > .m-body { margin: 12px 0 20px; }
+.m-team-name label { display: block; margin-bottom: 8px; }
+.m-team-input { width: 100%; height: 56px; padding: 8px 16px; border: 1px solid var(--apx-line-strong); border-radius: 0; background: var(--apx-panel); color: var(--apx-fg); font: 600 28px var(--font-cond); }
+.m-team-input.is-focus { outline: 2px solid var(--apx-fg); outline-offset: 2px; }
+.m-team-error { min-height: 26px; margin: 8px 0 10px; font-size: 18px; }
+.m-team-input[aria-invalid="true"] + .m-team-error { color: var(--apx-fg-2); }
+.m-palette { display: block; width: 100%; padding: 12px 16px; margin-top: 8px; text-align: left; background: var(--apx-panel-raised); }
+.m-palette.is-focus { outline: 2px solid var(--apx-fg); outline-offset: 1px; }
+.m-palette-chips { display: flex; gap: 6px; margin-top: 12px; }
+.m-palette-chips > span { position: relative; display: block; width: 25px; height: 28px; border: 1px solid rgba(242,244,247,.35); }
+.m-palette-chips > .selected { outline: 2px solid var(--apx-fg); outline-offset: 3px; }
+.m-palette-chips > .selected::after { content: ''; position: absolute; left: 8px; top: 8px; width: 7px; height: 7px; border: 1px solid #050608; background: #FFFFFF; transform: rotate(45deg); }
+.m-editor-traits { top: 210px; }
+.m-team-preview { position: absolute; left: 976px; top: 732px; width: 848px; padding: 20px 32px; background: var(--apx-panel); }
+.m-livery-swatch { position: relative; height: 110px; margin: 16px 0; overflow: hidden; background: var(--primary); border-bottom: 12px solid #15171A; }
+.m-livery-swatch .secondary { position: absolute; width: 65%; height: 40%; right: -5%; bottom: 10%; background: var(--secondary); transform: skewY(-12deg); }
+.m-livery-swatch .accent { position: absolute; width: 65%; height: 5%; right: -5%; bottom: 52%; background: var(--accent); transform: skewY(-12deg); }
+.m-livery-swatch[data-finish="gloss"] { box-shadow: inset 0 8px 0 rgba(255,255,255,.18); }
+.m-livery-swatch[data-finish="metallic"] { box-shadow: inset 0 8px 0 rgba(255,255,255,.35), inset 0 -20px 0 rgba(0,0,0,.1); }
+.m-team-strip { border-left: 4px solid; padding-left: 12px; }
+/* My teams: every saved custom team with race / edit / delete. */
+.m-team-list { position: absolute; left: 96px; top: 150px; width: 1728px; bottom: 120px; display: flex; flex-direction: column; }
+.m-team-list-head { display: flex; align-items: baseline; gap: 24px; }
+.m-team-list > .m-body { margin: 8px 0 20px; max-width: 1100px; }
+.m-team-rows { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; align-content: start; padding: 4px; }
+.m-team-row { display: grid; grid-template-columns: 132px minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 12px 16px; background: var(--apx-panel); border-left: 4px solid var(--team); }
+.m-team-row.is-sel { background: var(--apx-panel-raised); outline: 1px solid var(--apx-line-strong); }
+.m-team-row-swatch { height: 64px; margin: 0; border-bottom-width: 6px; }
+.m-team-row-info { min-width: 0; }
+.m-team-row-name { margin: 0; font: 700 28px var(--font-cond); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-team-row-info .m-meta { margin: 2px 0 0; }
+.m-team-row-tag { color: var(--team); }
+.m-team-row-actions { display: flex; gap: 8px; }
+.m-team-row-actions .m-btn, .m-team-row-actions .m-cta { min-width: 0; width: auto; height: 48px; padding: 0 18px; }
+.m-team-empty { grid-column: 1 / -1; }
+.m-team-list .m-team-actions { margin-top: 20px; }
+@media (max-width: 1100px) { .m-team-rows { grid-template-columns: 1fr; } .m-team-list { left: 16px; width: calc(100% - 32px); } }

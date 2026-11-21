@@ -1,0 +1,12 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.ktx2 binary
+*.hdr binary
+*.mp3 binary
+*.mp4 binary
+*.bin binary
+*.bat text eol=crlf
