@@ -1,5 +1,7 @@
 # HAIRPIN GP
 
+**Türkçe** · [English](README.en.md)
+
 **Oyna:** https://aktasmert251-alt.github.io/hairpin-gp/
 
 HAIRPIN GP, tarayıcıda çalışan, ücretsiz bir yarış oyunudur (three.js). Kurulum gerekmez; Chrome veya Edge ile açılır. Oyundaki takımlar, sürücüler, sponsorlar ve logolar tamamen **kurgusaldır**; gerçek bir marka, takım veya kişiyle ilgisi yoktur.
@@ -63,6 +65,8 @@ Tüm hakları saklıdır (bkz. [LICENSE](LICENSE)). Kaynak kod incelenebilir; iz
 ---
 
 ## English
+
+Full English README: [README.en.md](README.en.md).
 
 HAIRPIN GP is a free racing game that runs in the browser (three.js). **Play:** https://aktasmert251-alt.github.io/hairpin-gp/ — no install; use Chrome or Edge. All teams, drivers, sponsors and logos are fictional.
 
