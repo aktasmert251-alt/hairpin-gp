@@ -85,8 +85,11 @@ export class Lobby extends ListScreen {
     const code = h('div', 'm-room-code', this.st);
     this.codeLabel = h('p', 'm-meta', code);
     this.codeText = h('p', 'apx-num', code);
-    const copy = button(ctx, code, { id: 'lobby.copy', label: () => ctx.t(`online.${this.copyState}`),
-      disabled: () => !this.model()?.room, activate: () => void this.copyCode() });
+    // D-064: in a direct room without the pairing mailbox the 6-character code alone cannot bring a friend in (they need the
+    // invite code / link), so this button opens the invite panel instead of copying the code.
+    const inviteOnly = (): boolean => p2p().store.get().role === 'host' && !p2p().store.get().relay;
+    const copy = button(ctx, code, { id: 'lobby.copy', label: () => (inviteOnly() ? ctx.t('p2p.inviteFriend') : ctx.t(`online.${this.copyState}`)),
+      disabled: () => !this.model()?.room, activate: () => { if (inviteOnly()) this.openPanel(); else void this.copyCode(); } });
     this.body = h('div', 'm-lobby-body', this.st);
     const left = h('div', 'm-lobby-players', this.body);
     const rosterHead = h('div', 'm-lobby-section', left);

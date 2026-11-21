@@ -18,7 +18,7 @@ const DISPLAY_RE = new RegExp(`^[${ROOM_CODE_ALPHABET}]{${DISPLAY_CODE_LENGTH}}$
 export interface InviteCode { room: string; display: string; slot: number; sdp: string }
 export interface AnswerCode { display: string; slot: number; sdp: string }
 
-export type CodeError = 'empty' | 'tooLong' | 'short' | 'notInvite' | 'notAnswer' | 'corrupt';
+export type CodeError = 'empty' | 'tooLong' | 'short' | 'notInvite' | 'notAnswer' | 'corrupt' | 'unsupported' | 'roomCode';
 
 export class SignalCodeError extends Error {
   /** What the decoder saw (length, start, end, characters outside the code alphabet): for the error message, never the full code. */
@@ -79,9 +79,26 @@ async function pipe(bytes: Uint8Array, stream: CompressionStream | Decompression
   return new Uint8Array(await new Response(body).arrayBuffer());
 }
 
+/** Adler-32 of a string's UTF-16 code units (codes are ASCII): detects a truncated or edited plain code. */
+export function adler32(text: string): number {
+  let a = 1;
+  let b = 0;
+  for (let i = 0; i < text.length; i++) {
+    a = (a + text.charCodeAt(i)) % 65521;
+    b = (b + a) % 65521;
+  }
+  return ((b << 16) | a) >>> 0;
+}
+
+/**
+ * Codes are written PLAIN (base64url JSON with an Adler-32 field `x`), not zlib: CompressionStream / DecompressionStream are
+ * missing in iOS before 16.4 and in some in-app browsers, where a compressed code could not be read at all. Plain codes are
+ * longer (~2 KB) but they travel as links now. Compressed (older) codes are still read where the browser can inflate them.
+ */
 async function pack(prefix: string, obj: object): Promise<string> {
-  const json = new TextEncoder().encode(JSON.stringify(obj));
-  return prefix + b64url(await pipe(json, new CompressionStream('deflate')));
+  const json = JSON.stringify(obj);
+  const body = JSON.stringify({ ...obj, x: adler32(json) });
+  return prefix + b64url(new TextEncoder().encode(body));
 }
 
 /**
@@ -101,10 +118,16 @@ const MIN_PAYLOAD_CHARS = 300;
 /** Longest run of prose that may follow a code in a pasted message ("... kodu yapıştır", names, times). */
 const MAX_TRAILING_JUNK = 160;
 
+/** base64url of '{"' : a plain code; zlib codes start with "eJ". */
+const PLAIN_MARK = 'eyJ';
+
 async function decodePayload(payload: string): Promise<Record<string, unknown>> {
   let json: string;
+  const plain = payload.startsWith(PLAIN_MARK);
+  if (!plain && typeof DecompressionStream === 'undefined') throw new SignalCodeError('unsupported');
   try {
-    json = new TextDecoder('utf-8', { fatal: true }).decode(await pipe(unb64url(payload), new DecompressionStream('deflate')));
+    const bytes = unb64url(payload);
+    json = new TextDecoder('utf-8', { fatal: true }).decode(plain ? bytes : await pipe(bytes, new DecompressionStream('deflate')));
   } catch (e) {
     if (e instanceof SignalCodeError) throw e;
     throw new SignalCodeError('corrupt');
@@ -116,6 +139,12 @@ async function decodePayload(payload: string): Promise<Record<string, unknown>> 
     throw new SignalCodeError('corrupt');
   }
   if (typeof obj !== 'object' || obj === null || (obj as { v?: unknown }).v !== CODE_VERSION) throw new SignalCodeError('corrupt');
+  if (plain) {
+    // Plain codes carry their own checksum (zlib has one built in): the JSON without `x` must hash to `x`.
+    const { x, ...rest } = obj as Record<string, unknown>;
+    if (typeof x !== 'number' || adler32(JSON.stringify(rest)) !== x) throw new SignalCodeError('corrupt');
+    return rest;
+  }
   return obj as Record<string, unknown>;
 }
 
@@ -135,6 +164,8 @@ async function unpackText(raw: string, prefix: string, other: string, wrong: Cod
   // The code may sit inside a longer pasted message (sender name, time, instructions): start at its prefix.
   const at = text.indexOf(prefix);
   const atOther = text.indexOf(other);
+  // The 6-character code from the lobby (or a 5-character server room code) is not an invite: say so.
+  if (at < 0 && atOther < 0 && /^[A-Za-z0-9]{5,6}$/.test(text)) throw new SignalCodeError('roomCode');
   if (at < 0) throw new SignalCodeError(atOther >= 0 ? wrong : 'corrupt');
   if (atOther >= 0 && atOther < at) throw new SignalCodeError(wrong);
   const run = /^[A-Za-z0-9_-]*/.exec(text.slice(at + prefix.length))![0];
@@ -148,6 +179,7 @@ async function unpackText(raw: string, prefix: string, other: string, wrong: Cod
     try {
       return await decodePayload(payload);
     } catch (e) {
+      if (e instanceof SignalCodeError && e.code === 'unsupported') throw e;
       last = e;
     }
   }

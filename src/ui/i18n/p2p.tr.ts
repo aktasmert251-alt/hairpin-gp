@@ -48,6 +48,7 @@ const tr = {
   error: {
     empty: 'Kod boş.',
     tooLong: 'Kod çok uzun.',
+    roomCode: 'Bu 6 harfli oda kodu tek başına yetmez. Oda sahibinden davet bağlantısını iste: oda sahibi lobide "Arkadaş davet et" → "Yeni davet kodu" → "WhatsApp ile gönder" der; sen gelen bağlantıya tıklarsın.',
     short: 'Kod yarım kalmış görünüyor. Kodun tamamını kopyalayıp yapıştır (başındaki HP1I. veya HP1A. dahil). ({detail})',
     notInvite: 'Bu bir cevap kodu. Oda sahibinden davet kodu iste.',
     notAnswer: 'Bu bir davet kodu. Misafirin gönderdiği cevap kodunu yapıştır.',
@@ -64,7 +65,8 @@ const tr = {
   hostNotice: 'ODA SAHİBİSİN · Bu sekmeyi açık ve ön planda tut.',
   hiddenWarn: 'Sekme arka plandaydı: misafirler bekletildi, aracın durmuş olabilir.',
   dismiss: 'Tamam',
-  guests: 'MİSAFİRLER',
+  guests: 'ARKADAŞ DAVET ET',
+  inviteFriend: 'ARKADAŞ DAVET ET',
   newInvite: 'YENİ DAVET KODU',
   slot: 'Davet',
   slotValue: 'Misafir {n}',

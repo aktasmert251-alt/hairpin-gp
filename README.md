@@ -38,7 +38,7 @@ Tuşlar ve kumanda **Ayarlar > Kontroller** bölümünden değiştirilir. Telefo
 
 ## Çevrim içi odalar
 
-1. Oda kuran: **Çevrim içi → Oda kur → Misafirler → Yeni davet kodu** ile bir davet hazırlar ve **WhatsApp ile gönder** düğmesine basar (davet, tıklanabilir bir bağlantı olarak gider).
+1. Oda kuran: **Çevrim içi → Oda kur → Arkadaş davet et → Yeni davet kodu** ile bir davet hazırlar ve **WhatsApp ile gönder** düğmesine basar (davet, tıklanabilir bir bağlantı olarak gider).
 2. Katılan: bağlantıya dokunur; oyun açılır ve davet kendiliğinden dolar. Takma adını yazınca cevap otomatik hazırlanır; **WhatsApp ile gönder** ile oda sahibine bağlantı olarak yollar.
 3. Oda kuran, cevap bağlantısına **odanın açık olduğu tarayıcıda** dokunur; cevap oda sekmesine kendiliğinden iletilir ve bağlantı kurulur. Hiçbir şey yapıştırılmaz.
 

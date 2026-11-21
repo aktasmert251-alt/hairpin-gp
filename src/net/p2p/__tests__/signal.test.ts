@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isRoomCode } from '../../protocol';
-import { ANSWER_PREFIX, INVITE_PREFIX, decodeAnswer, decodeInvite, encodeAnswer, encodeInvite, isDisplayCode, newDisplayCode } from '../signal';
+import { ANSWER_PREFIX, INVITE_PREFIX, decodeAnswer, decodeInvite, encodeAnswer, encodeInvite, isDisplayCode, newDisplayCode, normalizeCode } from '../signal';
 
 /** A realistic Chrome data-channel offer with host + srflx candidates (documentation addresses only). */
 const SDP = [
@@ -27,10 +27,27 @@ describe('manual signaling codes', () => {
     expect(await decodeAnswer(ans)).toEqual({ display: 'K7M2PQ', slot: 2, sdp: SDP });
   });
 
-  it('is compact: a 3-candidate offer fits well under a chat message (< 1.2 KB, smaller than the SDP)', async () => {
+  it('is plain (no CompressionStream needed, iOS < 16.4 and in-app browsers) and still fits a message (< 3 KB)', async () => {
     const code = await encodeInvite(INVITE);
-    expect(code.length).toBeLessThan(1200);
-    expect(code.length).toBeLessThan(SDP.length);
+    expect(code.startsWith(`${INVITE_PREFIX}eyJ`)).toBe(true);
+    expect(code.length).toBeLessThan(3000);
+  });
+
+  it('still reads older compressed (zlib) codes where the browser can inflate them', async () => {
+    const json = new TextEncoder().encode(JSON.stringify({ v: 1, r: INVITE.room, c: INVITE.display, s: INVITE.slot, d: INVITE.sdp }));
+    const z = new Uint8Array(await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer());
+    let bin = '';
+    for (const b of z) bin += String.fromCharCode(b);
+    const old = INVITE_PREFIX + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    expect(old.startsWith(`${INVITE_PREFIX}eJ`)).toBe(true);
+    expect(await decodeInvite(old)).toEqual(INVITE);
+  });
+
+  it('a plain code with an edited character fails its checksum', async () => {
+    const code = await encodeInvite(INVITE);
+    const i = Math.floor(code.length / 2);
+    const edited = code.slice(0, i) + (code[i] === 'Q' ? 'R' : 'Q') + code.slice(i + 1);
+    await expect(decodeInvite(edited)).rejects.toMatchObject({ code: 'corrupt' });
   });
 
   it('ignores whitespace and line breaks that chat apps insert', async () => {
@@ -66,14 +83,16 @@ describe('manual signaling codes', () => {
   });
 
   it('repairs typographic look-alikes and invisible characters added by keyboards and chat apps', async () => {
-    // Find an invite whose code contains '-' or '_' (vary the SDP's ICE password until it does).
-    let code = '';
-    for (let i = 0; i < 200 && !/[-_]/.test(code); i++) code = await encodeInvite({ ...INVITE, sdp: SDP.replace('bWQkT3n2Y0p1Qy8hZr4N6s7V', `bWQk${i}n2Y0p1Qy8hZr4N6s7V`) });
-    expect(code).toMatch(/[-_]/);
+    expect(normalizeCode('a\u2011b\u2013c\uFF3Fd\u2212e')).toBe('a-b-c_d-e');
+    expect(normalizeCode('a\u200Bb\u200Ec\u00A0d\uFEFFe\u00ADf')).toBe('abcdef');
+    const code = await encodeInvite(INVITE);
     const decoded = await decodeInvite(code);
-    expect(await decodeInvite(code.replace(/-/g, '\u2011').replace(/_/g, '\uFF3F'))).toEqual(decoded);
-    expect(await decodeInvite(code.replace(/-/g, '\u2013'))).toEqual(decoded);
-    expect(await decodeInvite(`${code.slice(0, 50)}\u200B${code.slice(50, 100)}\u00A0${code.slice(100)}\uFEFF`)).toEqual(decoded);
+    expect(await decodeInvite(`\u200E${code.slice(0, 50)}\u200B${code.slice(50, 100)}\u00A0${code.slice(100)}\uFEFF`)).toEqual(decoded);
+  });
+  it('explains that a 6-character room code is not an invite', async () => {
+    await expect(decodeInvite('HY88M3')).rejects.toMatchObject({ code: 'roomCode' });
+    await expect(decodeInvite(' hy88m3 ')).rejects.toMatchObject({ code: 'roomCode' });
+    await expect(decodeAnswer('ABCDE')).rejects.toMatchObject({ code: 'roomCode' });
   });
 
   it('says "short" when the code was cut off while copying', async () => {
@@ -86,7 +105,7 @@ describe('manual signaling codes', () => {
     await expect(decodeInvite(await encodeInvite({ ...INVITE, room: 'abc' }))).rejects.toMatchObject({ code: 'corrupt' });
     await expect(decodeInvite(await encodeInvite({ ...INVITE, slot: 0 }))).rejects.toMatchObject({ code: 'corrupt' });
     await expect(decodeInvite(await encodeInvite({ ...INVITE, sdp: 'not sdp' }))).rejects.toMatchObject({ code: 'corrupt' });
-    await expect(decodeInvite(await encodeInvite({ ...INVITE, sdp: `v=0${'x'.repeat(9000)}` }))).rejects.toMatchObject({ code: 'corrupt' });
+    await expect(decodeInvite(await encodeInvite({ ...INVITE, sdp: `v=0${'x'.repeat(9000)}` }))).rejects.toMatchObject({ code: expect.stringMatching(/^(corrupt|tooLong)$/) });
     await expect(decodeAnswer(await encodeAnswer({ display: 'IOIOIO', slot: 3, sdp: SDP }))).rejects.toMatchObject({ code: 'corrupt' });
   });
 

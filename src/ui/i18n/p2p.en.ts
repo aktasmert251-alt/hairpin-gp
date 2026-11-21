@@ -50,6 +50,7 @@ const en: DictOf<typeof tr> = {
   error: {
     empty: 'The code is empty.',
     tooLong: 'The code is too long.',
+    roomCode: 'The 6-character room code alone is not enough. Ask the host for the invite link: in the lobby the host picks "Invite a friend" → "New invite code" → "Send with WhatsApp"; you tap the link that arrives.',
     short: 'The code looks cut off. Copy the whole code and paste it (including the leading HP1I. or HP1A.). ({detail})',
     notInvite: 'This is an answer code. Ask the host for an invite code.',
     notAnswer: 'This is an invite code. Paste the answer code your guest sent.',
@@ -66,7 +67,8 @@ const en: DictOf<typeof tr> = {
   hostNotice: 'YOU ARE THE HOST · Keep this tab open and in front.',
   hiddenWarn: 'The tab was in the background: guests were kept waiting and your car may have stopped.',
   dismiss: 'OK',
-  guests: 'GUESTS',
+  guests: 'INVITE A FRIEND',
+  inviteFriend: 'INVITE A FRIEND',
   newInvite: 'NEW INVITE CODE',
   slot: 'Invite',
   slotValue: 'Guest {n}',
