@@ -8,7 +8,7 @@ import { bottomBar, header, langIndicator, ListScreen } from './base';
 import type { ScreenCtx } from './ctx';
 import { clampRoomSettings, codeInput, onlineIdentity, validCode, validServer } from './onlineLogic';
 import { MOBILE_AI } from './raceSetup';
-import { MAX_CODE_CHARS, P2P_GUEST_URL, P2P_HOST_URL, p2p } from '../../net/index';
+import { MAX_CODE_CHARS, codeDiag, P2P_GUEST_URL, P2P_HOST_URL, p2p, takePendingInvite, whatsAppUrl } from '../../net/index';
 
 /** D-064: how this player goes online: the game server, hosting a room in this tab, or joining a host's room by invite code. */
 type ConnMode = 'server' | 'host' | 'join';
@@ -132,6 +132,9 @@ export class Online extends ListScreen {
   private answerCopy: 'copyAnswer' | 'copied' | 'copyFailed' = 'copyAnswer';
   private p2pUnsub: (() => void) | null = null;
   private answering = false;
+  /** An invite link filled the field: the answer code is made as soon as the nickname is valid. */
+  private autoAnswer = false;
+  private linked = false;
   private serverOnly: HTMLElement[] = [];
   private p2pOnly: { el: HTMLElement; modes: ConnMode[] }[] = [];
   private code!: HTMLInputElement;
@@ -166,6 +169,10 @@ export class Online extends ListScreen {
     const name = this.field('online.name', 'online.name', 'online.nameHint', 64);
     this.nameInput = name.el as HTMLInputElement;
     this.nameInput.value = new URLSearchParams(location.search).get('name') ?? '';
+    // Invite link: the nickname is committed (Enter / next field / keyboard "done") -> the answer code is made.
+    const onName = (): void => this.maybeAutoAnswer();
+    this.nameInput.addEventListener('change', onName);
+    this.cleanups.push(() => this.nameInput.removeEventListener('change', onName));
     this.privacy = h('p', 'm-body m-p2p-privacy', this.col);
     this.privacy.setAttribute('role', 'note');
     this.p2pOnly.push({ el: this.privacy, modes: ['host', 'join'] });
@@ -217,7 +224,11 @@ export class Online extends ListScreen {
       disabled: () => this.connMode !== 'join' || !p2p().store.get().guest.answer, activate: () => void this.copyAnswer() });
     const shareAnswer: Ctl[] = touchUi(ctx) && canShare() ? [button(ctx, this.answerWrap, { id: 'online.shareAnswer', label: () => ctx.t('touch.online.share'),
       disabled: () => this.connMode !== 'join' || !p2p().store.get().guest.answer,
-      activate: () => { const a = p2p().store.get().guest.answer; if (a) void shareText(a); } })] : [];
+      activate: () => { const a = p2p().store.get().guest.answer; if (a) void shareText(`${ctx.t('p2p.whatsAppAnswer')}
+${a}`); } })] : [];
+    // One tap: the answer code on its own line in a message to the host (wa.me opens WhatsApp / WhatsApp Web with the text prefilled).
+    const sendAnswer = button(ctx, this.answerWrap, { id: 'online.sendAnswer', label: () => ctx.t('p2p.sendWhatsApp'), primary: true,
+      disabled: () => this.connMode !== 'join' || !p2p().store.get().guest.answer, activate: () => this.sendAnswerMessage() });
     const visibility = selectRow<'public' | 'private'>(ctx, this.col, { id: 'online.visibility', label: () => ctx.t('online.visibility'),
       options: () => (['public', 'private'] as const).map((v) => ({ v, label: () => ctx.t(`online.visibilityValue.${v}`) })),
       get: () => this.visibility, set: (v) => { this.visibility = v; this.render(); } });
@@ -262,7 +273,7 @@ export class Online extends ListScreen {
       c.disabled = () => this.connMode !== 'server' || !!own?.();
     }
     server.disabled = () => this.connMode !== 'server' || !this.advanced;
-    this.focus.dispose(); this.setControls([mode, name, hostStart, invite, ...mobile, makeAnswer, copyAnswer, ...shareAnswer, visibility, create, code, join, quickJoin, advanced, server, back]);
+    this.focus.dispose(); this.setControls([mode, name, hostStart, invite, ...mobile, makeAnswer, sendAnswer, copyAnswer, ...shareAnswer, visibility, create, code, join, quickJoin, advanced, server, back]);
     this.roomRows = h('div', 'm-room-rows', this.directory);
     this.roomEmpty = h('p', 'm-body m-room-empty', this.directory);
     this.message = h('p', 'm-body m-net-message', this.col);
@@ -349,6 +360,29 @@ export class Online extends ListScreen {
       this.answering = false;
       this.render();
     }
+  }
+
+  private sendAnswerMessage(): void {
+    const code = p2p().store.get().guest.answer;
+    if (!code) return;
+    window.open(whatsAppUrl(`${this.ctx.t('p2p.whatsAppAnswer')}
+${code}`), '_blank', 'noopener');
+  }
+
+  private maybeAutoAnswer(): void {
+    if (!this.autoAnswer || this.connMode !== 'join' || !this.invite.value.trim() || !this.validP2P()) return;
+    this.autoAnswer = false;
+    void this.answerInvite();
+  }
+
+  /** An invite link opened this page: join mode with the invite filled in (the nickname is still asked for). */
+  private takeLinkInvite(): void {
+    const code = takePendingInvite();
+    if (!code) return;
+    this.connMode = 'join';
+    this.invite.value = code.slice(0, MAX_CODE_CHARS);
+    this.autoAnswer = true;
+    this.linked = true;
   }
 
   private async copyAnswer(): Promise<void> {
@@ -465,7 +499,10 @@ export class Online extends ListScreen {
     this.unsub = this.ctx.deps.net?.subscribe(() => this.render()) ?? null;
     this.p2pUnsub?.();
     this.p2pUnsub = p2p().store.subscribe(() => this.render());
+    this.takeLinkInvite();
     super.enter(from);
+    if (this.linked) this.focus.set(this.ctls.findIndex((c) => c.id === 'online.name'));
+    this.maybeAutoAnswer();
     this.pollTimer = setInterval(() => this.pollRooms(), 3000);
     this.pollRooms();
   }
@@ -511,7 +548,7 @@ export class Online extends ListScreen {
     const m = p2p().store.get();
     for (const el of this.serverOnly) el.hidden = mode !== 'server';
     for (const x of this.p2pOnly) x.el.hidden = !x.modes.includes(mode);
-    this.modeHint.textContent = t(`p2p.modeHint.${mode}`);
+    this.modeHint.textContent = t(this.linked && mode === 'join' ? 'p2p.fromLink' : `p2p.modeHint.${mode}`);
     this.privacy.textContent = t(p2p().supported() ? 'p2p.privacy' : 'p2p.unsupported');
     if (this.phoneHost) this.phoneHost.textContent = t('touch.online.phoneHost');
     const guest = m.role === 'guest' || mode === 'join' ? m.guest : null;
@@ -522,7 +559,7 @@ export class Online extends ListScreen {
     // The status line speaks for the p2p flow: host left > guest error / state > net status.
     const net = this.ctx.deps.net?.get();
     if (m.hostLeft) this.message.textContent = t('p2p.hostLeft');
-    else if (mode === 'join' && guest && guest.state !== 'idle') this.message.textContent = guest.error ? t(`p2p.error.${guest.error}`) : t(`p2p.guestState.${guest.state}`);
+    else if (mode === 'join' && guest && guest.state !== 'idle') this.message.textContent = guest.error ? t(`p2p.error.${guest.error}`, { detail: codeDiag.last }) : t(`p2p.guestState.${guest.state}`);
     else if (net?.error) this.message.textContent = t(`online.error.${net.error}`);
   }
 

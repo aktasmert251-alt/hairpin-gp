@@ -38,9 +38,11 @@ Keys and gamepad bindings can be changed in **Settings > Controls**. On a phone,
 
 ## Online rooms
 
-1. Room host: choose **Online → Host a room**, get an invite code and send it to a friend.
-2. Guest: choose **Join a room**, paste the code and send the answer code back.
+1. Room host: **Online → Host a room → Guests → New invite code**, then tap **Send with WhatsApp** (the invite goes out as a tappable link).
+2. Guest: taps the link; the game opens with the invite already filled in. After typing a nickname the answer code is made automatically; **Send with WhatsApp** returns it to the host.
 3. The host pastes the answer code and the connection is made.
+
+You can also copy and paste the invite and answer codes instead of using the link.
 
 The room runs in the host's browser; the game has no server. With a direct connection your IP address can be visible to the other players in the room. On some networks (strict firewalls, mobile data) a connection may not be possible. Details: [docs/design/multiplayer-p2p.md](docs/design/multiplayer-p2p.md).
 

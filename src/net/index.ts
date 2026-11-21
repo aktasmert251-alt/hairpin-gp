@@ -14,6 +14,8 @@ export {
   EMPTY_P2P, P2P_GUEST_URL, P2P_HOST_URL, canInvite, isP2PUrl, liveSlots, type P2PError, type P2PModel, type P2PSlot,
 } from './p2p/model';
 export { MAX_CODE_CHARS } from './p2p/config';
+export { codeDiag } from './p2p/signal';
+export { buildInviteLink, hasPendingInvite, parseInviteHash, setPendingInvite, takePendingInvite, whatsAppUrl } from './p2p/inviteLink';
 export {
   OFFLINE_LOBBY, RECONNECT_BACKOFF_MS, RECONNECT_GRACE_MS, createNetClient, defaultServerUrl,
   type NetClient, type NetClientDeps, type NetClientOptions, type SocketLike,

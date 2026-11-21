@@ -73,7 +73,23 @@ function randomSeed(): number {
   return a[0]! | 0;
 }
 
+/**
+ * D-064 invite link (`#join=HP1I.…`): remember the invite, clear the fragment (a reload must not re-trigger it) and, after the
+ * title, open the Online screen in join mode (see `navigate` below). The net module is fetched only when a link is present.
+ */
+let inviteLinkPending = false;
+async function captureInviteLink(): Promise<void> {
+  if (!/^#\s*(?:join(?:=|%3D)|HP1I)/i.test(window.location.hash)) return;
+  const mod = await import('./net/index');
+  const code = mod.parseInviteHash(window.location.hash);
+  if (!code) return;
+  mod.setPendingInvite(code);
+  inviteLinkPending = true;
+  window.history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+
 async function boot(): Promise<void> {
+  await captureInviteLink();
   const services = createAppServices(apex, launch);
   const { bus, settings, i18n } = services;
   const app = createAppStateMachine(bus);
@@ -583,6 +599,12 @@ async function boot(): Promise<void> {
         if (app.current() === 'title' && a.to === 'mainMenu') {
           void audio.unlock(); // also reached without a DOM gesture (gamepad, __APEX__.input); unlock() is idempotent
           app.go('menu');
+          // An invite link was opened: the title leads straight to the Online screen (join mode, invite filled in).
+          if (inviteLinkPending) {
+            inviteLinkPending = false;
+            show('online');
+            break;
+          }
         }
         if (a.to === 'title') app.go('title');
         show(a.to);

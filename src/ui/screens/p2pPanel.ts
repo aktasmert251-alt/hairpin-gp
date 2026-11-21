@@ -1,7 +1,7 @@
 // D-064 host-in-browser rooms: the host's invite panel (lobby). Per guest slot: create an invite code, copy it to the friend,
 // paste the friend's answer code, see the slot connect. Keyboard / gamepad: its own focus list while open (lobby swaps lists).
 import type { P2PModel, P2PSlot } from '../../net/index';
-import { P2P_MAX_PLAYERS, canInvite, p2p } from '../../net/index';
+import { P2P_MAX_PLAYERS, buildInviteLink, codeDiag, canInvite, p2p, whatsAppUrl } from '../../net/index';
 import { button, selectRow, type Ctl } from '../controls';
 import { h } from '../dom';
 import type { ScreenCtx } from './ctx';
@@ -13,6 +13,7 @@ export class P2PInvitePanel {
   isOpen = false;
   private selected = 0;
   private copyState: 'copyInvite' | 'copied' | 'copyFailed' = 'copyInvite';
+  private linkState: 'copyLink' | 'copyLinkDone' | 'copyFailed' = 'copyLink';
   private title: HTMLElement;
   private code: HTMLElement;
   private notice: HTMLElement;
@@ -39,7 +40,7 @@ export class P2PInvitePanel {
     this.notice = h('p', 'm-body m-p2p-privacy', panel);
     const newInvite = button(ctx, panel, { id: 'p2p.newInvite', label: () => t('p2p.newInvite'), primary: true,
       disabled: () => !canInvite(this.model().slots, P2P_MAX_PLAYERS), activate: () => {
-        this.copyState = 'copyInvite';
+        this.copyState = 'copyInvite'; this.linkState = 'copyLink';
         void p2p().newInvite().then(() => {
           const s = this.model().slots.at(-1);
           if (s) this.selected = s.n;
@@ -51,7 +52,7 @@ export class P2PInvitePanel {
         const slots = this.model().slots;
         return slots.length ? slots.map((s) => ({ v: s.n, label: () => t('p2p.slotValue', { n: s.n }) })) : [{ v: 0, label: () => t('p2p.slotNone') }];
       },
-      get: () => this.slot()?.n ?? 0, set: (n) => { this.selected = n; this.copyState = 'copyInvite'; this.answer.value = ''; this.render(); },
+      get: () => this.slot()?.n ?? 0, set: (n) => { this.selected = n; this.copyState = 'copyInvite'; this.linkState = 'copyLink'; this.answer.value = ''; this.render(); },
       disabled: () => this.model().slots.length < 2 });
     this.status = h('p', 'm-body m-p2p-status', panel);
     this.status.setAttribute('role', 'status');
@@ -63,12 +64,18 @@ export class P2PInvitePanel {
     this.inviteText.rows = 3;
     this.inviteText.spellcheck = false;
     this.inviteLabel.htmlFor = this.inviteText.id;
+    const waiting = (): boolean => !!this.slot()?.invite && this.slot()?.state === 'waiting';
+    // One tap: the invite as a link (the code sits in the URL fragment, which never reaches a server), straight into a message.
+    const whatsApp = button(ctx, inviteWrap, { id: 'p2p.sendWhatsApp', label: () => t('p2p.sendWhatsApp'), primary: true,
+      disabled: () => !waiting(), activate: () => this.sendMessage() });
+    const copyLink = button(ctx, inviteWrap, { id: 'p2p.copyLink', label: () => t(`p2p.${this.linkState}`),
+      disabled: () => !waiting(), activate: () => void this.copyLink() });
     const copy = button(ctx, inviteWrap, { id: 'p2p.copyInvite', label: () => t(`p2p.${this.copyState}`),
       disabled: () => !this.slot()?.invite || this.slot()?.state !== 'waiting', activate: () => void this.copy() });
     // Mobile: share sheet for the invite, a paste button for the answer (touch UI only; desktop keeps its focus order).
     const share: Ctl[] = touchUi(ctx) && canShare() ? [button(ctx, inviteWrap, { id: 'p2p.shareInvite', label: () => t('touch.online.share'),
       disabled: () => !this.slot()?.invite || this.slot()?.state !== 'waiting',
-      activate: () => { const s = this.slot(); if (s?.invite) void shareText(s.invite); } })] : [];
+      activate: () => { const s = this.slot(); if (s?.invite) void shareText(this.link(s.invite)); } })] : [];
     const answerWrap = h('div', 'm-net-field m-p2p-code', panel);
     this.answerLabel = h('label', 'm-meta', answerWrap);
     this.answer = h('textarea', 'm-net-input m-p2p-text', answerWrap);
@@ -108,7 +115,7 @@ export class P2PInvitePanel {
       activate: () => { const s = this.slot(); if (s) p2p().cancelSlot(s.n); this.render(); } });
     this.list = h('ul', 'm-p2p-slots', panel);
     const back = button(ctx, panel, { id: 'p2p.close', label: () => t('online.back'), activate: () => this.close() });
-    this.controls = [newInvite, slot, copy, ...share, answerCtl, ...paste, connect, cancel, back];
+    this.controls = [newInvite, slot, whatsApp, copyLink, copy, ...share, answerCtl, ...paste, connect, cancel, back];
   }
 
   /** Set by the lobby: moves its focus list (the answer field's arrow keys). */
@@ -132,6 +139,24 @@ export class P2PInvitePanel {
     });
   }
 
+  private link(invite: string): string {
+    return buildInviteLink(invite);
+  }
+
+  /** wa.me opens WhatsApp (phone app, WhatsApp Web or desktop app) with the message prefilled; the link only, never the raw code. */
+  private sendMessage(): void {
+    const s = this.slot();
+    if (!s?.invite) return;
+    window.open(whatsAppUrl(this.ctx.t('p2p.whatsAppInvite', { link: this.link(s.invite) })), '_blank', 'noopener');
+  }
+
+  private async copyLink(): Promise<void> {
+    const s = this.slot();
+    if (!s?.invite) return;
+    this.linkState = (await copyText(this.link(s.invite), this.inviteText)) ? 'copyLinkDone' : 'copyFailed';
+    this.render();
+  }
+
   private async copy(): Promise<void> {
     const s = this.slot();
     if (!s?.invite) return;
@@ -142,7 +167,7 @@ export class P2PInvitePanel {
   open(): void {
     this.isOpen = true;
     this.el.hidden = false;
-    this.copyState = 'copyInvite';
+    this.copyState = 'copyInvite'; this.linkState = 'copyLink';
     this.render();
   }
 
@@ -166,7 +191,7 @@ export class P2PInvitePanel {
     this.code.textContent = m.display;
     this.notice.textContent = t('p2p.privacy');
     this.status.textContent = !s ? t('p2p.slotNone')
-      : `${t('p2p.slotValue', { n: s.n })} · ${s.error ? t(`p2p.error.${s.error}`) : t(`p2p.slotState.${s.state}`, { ping: s.pingMs })}`;
+      : `${t('p2p.slotValue', { n: s.n })} · ${s.error ? t(`p2p.error.${s.error}`, { detail: codeDiag.last }) : t(`p2p.slotState.${s.state}`, { ping: s.pingMs })}`;
     this.inviteLabel.textContent = t('p2p.invite');
     const invite = s?.state === 'waiting' ? s.invite : '';
     if (this.inviteText.value !== invite) this.inviteText.value = invite;
@@ -174,7 +199,7 @@ export class P2PInvitePanel {
     this.answer.placeholder = t('p2p.answerInHint');
     this.list.replaceChildren(...m.slots.map((x) => {
       const li = h('li', `m-p2p-slot is-${x.state}`);
-      li.textContent = `${t('p2p.slotValue', { n: x.n })} · ${x.error ? t(`p2p.error.${x.error}`) : t(`p2p.slotState.${x.state}`, { ping: x.pingMs })}`;
+      li.textContent = `${t('p2p.slotValue', { n: x.n })} · ${x.error ? t(`p2p.error.${x.error}`, { detail: codeDiag.last }) : t(`p2p.slotState.${x.state}`, { ping: x.pingMs })}`;
       return li;
     }));
     for (const c of this.controls) c.render();

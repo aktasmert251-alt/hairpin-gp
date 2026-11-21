@@ -21,10 +21,24 @@ export interface AnswerCode { display: string; slot: number; sdp: string }
 export type CodeError = 'empty' | 'tooLong' | 'short' | 'notInvite' | 'notAnswer' | 'corrupt';
 
 export class SignalCodeError extends Error {
+  /** What the decoder saw (length, start, end, characters outside the code alphabet): for the error message, never the full code. */
+  detail = '';
   constructor(readonly code: CodeError) {
     super(code);
   }
 }
+
+/** Short, non-sensitive description of a pasted text for support: lengths and the first / last few characters only. */
+export function describeCode(raw: string): string {
+  const t = normalizeCode(raw);
+  const bad = (t.match(/[^A-Za-z0-9_.-]/g) ?? []).length;
+  const head = t.slice(0, 8);
+  const tail = t.length > 24 ? t.slice(-6) : '';
+  return `${t.length} karakter, baş: ${head}, son: ${tail || '-'}, geçersiz karakter: ${bad}`;
+}
+
+/** Description of the code that was decoded last (shown in the error message so a failed paste can be diagnosed). */
+export const codeDiag = { last: '' };
 
 export function isDisplayCode(v: unknown): v is string {
   return typeof v === 'string' && DISPLAY_RE.test(v);
@@ -78,7 +92,7 @@ export function normalizeCode(raw: string): string {
   return raw
     .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, '-')
     .replace(/[\uFF3F\u203F]/g, '_')
-    .replace(/[\u200B-\u200D\u2060\uFEFF\u00AD]/g, '')
+    .replace(/[\p{Cf}]/gu, '') // zero-width, direction marks (LRM / RLM, common in WhatsApp), soft hyphen, BOM, isolates
     .replace(/\s+/g, '');
 }
 
@@ -106,6 +120,16 @@ async function decodePayload(payload: string): Promise<Record<string, unknown>> 
 }
 
 async function unpack(raw: string, prefix: string, other: string, wrong: CodeError): Promise<Record<string, unknown>> {
+  codeDiag.last = describeCode(raw);
+  try {
+    return await unpackText(raw, prefix, other, wrong);
+  } catch (e) {
+    if (e instanceof SignalCodeError && !e.detail) e.detail = describeCode(raw);
+    throw e;
+  }
+}
+
+async function unpackText(raw: string, prefix: string, other: string, wrong: CodeError): Promise<Record<string, unknown>> {
   const text = normalizeCode(raw);
   if (!text) throw new SignalCodeError('empty');
   // The code may sit inside a longer pasted message (sender name, time, instructions): start at its prefix.

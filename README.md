@@ -38,9 +38,11 @@ Tuşlar ve kumanda **Ayarlar > Kontroller** bölümünden değiştirilir. Telefo
 
 ## Çevrim içi odalar
 
-1. Oda kuran: **Çevrim içi → Oda kur** ile bir davet kodu alır ve arkadaşına gönderir.
-2. Katılan: **Odaya katıl** ile kodu yapıştırır ve cevap kodunu geri gönderir.
+1. Oda kuran: **Çevrim içi → Oda kur → Misafirler → Yeni davet kodu** ile bir davet hazırlar ve **WhatsApp ile gönder** düğmesine basar (davet, tıklanabilir bir bağlantı olarak gider).
+2. Katılan: bağlantıya dokunur; oyun açılır ve davet kendiliğinden dolar. Takma adını yazınca cevap kodu otomatik hazırlanır; **WhatsApp ile gönder** ile oda sahibine yollar.
 3. Oda kuran cevap kodunu yapıştırınca bağlantı kurulur.
+
+Bağlantı yerine kod kullanmak istersen davet ve cevap kodlarını kopyalayıp yapıştırabilirsin.
 
 Oda, kuran kişinin tarayıcısında çalışır; oyunun bir sunucusu yoktur. Doğrudan bağlantıda IP adresiniz odadaki oyunculara görünebilir. Bazı ağlarda (katı güvenlik duvarı, mobil veri) bağlantı kurulamayabilir. Ayrıntı: [docs/design/multiplayer-p2p.md](docs/design/multiplayer-p2p.md).
 

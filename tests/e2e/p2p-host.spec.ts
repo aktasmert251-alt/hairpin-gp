@@ -114,3 +114,82 @@ test('host-in-browser room: manual code exchange, paused banner, short race, hos
   expect(guestErrors).toEqual([]);
   await guestCtx.close();
 });
+
+// Invite link flow: host "send with WhatsApp" / "copy link" -> the guest opens `/#join=<invite>` -> title -> Online screen in
+// join mode with the invite filled in -> nickname -> the answer code is made by itself -> "send with WhatsApp" carries it on
+// its own line -> the host pastes it. wa.me is stubbed (no network).
+test('invite link: host sends a link, guest lands on Online with the invite filled and the answer made automatically', async ({ page, apex, browser }) => {
+  test.setTimeout(180_000);
+  await seedSettings(page, { ui: { animations: 'off' }, graphics: { preset: 'low' } });
+  const guestCtx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+  await guestCtx.addInitScript(BLOCK_VITE_HMR);
+  await guestCtx.addInitScript(RESET_STORAGE_ONCE);
+  for (const ctx of [page.context(), guestCtx]) await ctx.route('https://wa.me/**', (r) => r.fulfill({ status: 200, contentType: 'text/html', body: '<title>wa</title>' }));
+  const guest = await guestCtx.newPage();
+  const guestErrors: string[] = [];
+  guest.on('console', (m) => { if (m.type() === 'error') guestErrors.push(m.text()); });
+  guest.on('pageerror', (e) => guestErrors.push(e.message));
+  await seedSettings(guest, { ui: { animations: 'off' }, graphics: { preset: 'low' } });
+  const hostUi = new Ui(apex, page);
+  const guestApex = new ApexClient(guest);
+  const guestUi = new Ui(guestApex, guest);
+  const SHOTS3 = path.join('test-results', 'screens', 'yayin3');
+
+  await toOnline(hostUi, 'host', 'Ev Sahibi');
+  await hostUi.click('online.hostStart');
+  await hostUi.waitScreen('lobby', 20_000);
+  await hostUi.click('lobby.p2pInvites');
+  await hostUi.click('p2p.newInvite');
+  await expect.poll(() => value(page, '#p2p-invite-out'), { timeout: 15_000 }).toMatch(/^HP1I\./);
+  const invite = await value(page, '#p2p-invite-out');
+  await expect(page.locator('[data-focus-id="p2p.sendWhatsApp"]')).toBeVisible();
+  await expect(page.locator('[data-focus-id="p2p.copyLink"]')).toBeVisible();
+  await page.screenshot({ path: path.join(SHOTS3, 'host-invite-panel-1920.png') });
+
+  // "Send with WhatsApp": a new tab on wa.me whose text holds the invite link (not the raw code twice).
+  const [popup] = await Promise.all([page.waitForEvent('popup'), hostUi.click('p2p.sendWhatsApp')]);
+  const waUrl = new URL(popup.url());
+  expect(waUrl.origin + waUrl.pathname).toBe('https://wa.me/');
+  const message = waUrl.searchParams.get('text') ?? '';
+  expect(message).toContain('HAIRPIN GP');
+  const link = /https?:\/\/\S+#join=\S+/.exec(message)?.[0] ?? '';
+  expect(link).toContain(`#join=${invite}`);
+  expect(message.split(invite).length - 1).toBe(1);
+  await popup.close();
+
+  // Guest opens the link: hash cleared at once, title, any key -> Online (join mode, invite filled in).
+  await guestApex.open(`/?p2pIce=none&quality=low&mute=1&autopause=0&nopost=1#join=${invite}`, 'sceneReady');
+  expect(await guest.evaluate(() => location.hash)).toBe('');
+  await guest.waitForTimeout(400);
+  await guestUi.key('Space');
+  await guestUi.waitScreen('online', 20_000);
+  expect(await value(guest, '[data-focus-id="online.invite"]')).toBe(invite);
+  await expect(guest.locator('.m-p2p-privacy').first()).toBeVisible();
+  await expect(guest.locator('#online-answer')).toBeHidden();
+
+  // The nickname is still required: the answer code is made once it is committed.
+  await guest.locator('[data-focus-id="online.name"]').fill('Misafir');
+  await guest.locator('[data-focus-id="online.name"]').press('Enter');
+  await expect.poll(() => value(guest, '#online-answer'), { timeout: 15_000 }).toMatch(/^HP1A\./);
+  const answer = await value(guest, '#online-answer');
+  await guest.screenshot({ path: path.join(SHOTS3, 'guest-online-from-link-1920.png') });
+
+  // Guest "send with WhatsApp": the answer code on its own line.
+  const [popup2] = await Promise.all([guest.waitForEvent('popup'), guestUi.click('online.sendAnswer')]);
+  const text2 = new URL(popup2.url()).searchParams.get('text') ?? '';
+  expect(text2.split('\n')).toEqual([expect.stringContaining('HAIRPIN GP'), answer]);
+  await popup2.close();
+
+  // The host pastes the answer: connected, guest in the lobby.
+  await page.locator('#p2p-answer-in').fill(answer);
+  await hostUi.click('p2p.connect');
+  await expect(page.locator('.m-p2p-slot.is-connected')).toHaveCount(1, { timeout: 20_000 });
+  await guestUi.waitScreen('lobby', 20_000);
+
+  // A reload does not re-trigger the link.
+  await guest.reload();
+  await guestApex.whenReady('sceneReady');
+  expect(await guest.evaluate(() => location.hash)).toBe('');
+  expect(guestErrors).toEqual([]);
+  await guestCtx.close();
+});
