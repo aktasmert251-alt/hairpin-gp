@@ -65,6 +65,8 @@ export class RaceCar {
   /** Server ms until which this human is a reset ghost (no contacts either way). */
   ghostUntil = 0;
   loaded = false;
+  /** Race ms at which this car loaded after the start (late join); NaN = loaded in time. */
+  loadedAtRaceMs = Number.NaN;
   jumpChecked = false;
   inBox = false;
   strikes = 0;
@@ -378,12 +380,21 @@ export class Room {
 
   loaded(p: Player, trackHash: string): NetErrorCode | null {
     const car = this.carOf(p);
-    if (this.phase !== 'loading' || !car) return 'phase';
+    const late = this.phase !== 'loading';
+    // Late join (user bug 2026-11-21): a slow PC finished loading after the start; it still races, from its grid slot.
+    if (!car || (late && (!this.racing() || car.loaded || !car.timing.running))) return 'phase';
     if (trackHash !== this.race!.trackHash) {
       this.deps.log('trackHashMismatch', { room: this.code, id: p.id });
       return 'version';
     }
     car.loaded = true;
+    if (late) {
+      const r = this.race!;
+      car.loadedAtRaceMs = Number.isFinite(r.t0) ? this.deps.now() - r.t0 : 0;
+      this.deps.log('lateJoin', { room: this.code, id: p.id, raceMs: Math.round(car.loadedAtRaceMs) });
+      if (Number.isFinite(r.t0)) p.send({ type: 'start', t0ServerMs: r.t0 });
+      return null;
+    }
     this.maybeAllLoaded();
     return null;
   }
@@ -397,7 +408,8 @@ export class Room {
   private beginCountdown(): void {
     const r = this.race!;
     const now = this.deps.now();
-    for (const c of r.cars) if (c.human && !c.loaded) this.setStatus(c, 'dnf'); // did not start
+    // Gone players did not start; a connected one that is still loading joins late (see loaded() and checkStalls()).
+    for (const c of r.cars) if (c.human && !c.loaded && !c.player) this.setStatus(c, 'dnf');
     r.t0 = now + this.cfg.countdownMs;
     this.phase = 'countdown';
     this.deps.log('raceCountdown', { room: this.code, raceId: r.raceId });
@@ -747,7 +759,11 @@ export class Room {
     for (const c of r.cars) {
       if (!c.human || !c.timing.running) continue;
       let stalled = false;
-      if (!c.hasState) stalled = raceMs - r.lightsOutAtMs >= this.cfg.startStallMs; // never on the grid: did not start
+      if (!c.hasState) {
+        // Never on the grid. Still loading (slow PC): wait up to lateJoinMs. Loaded (in time or late): startStallMs from then.
+        const from = Math.max(r.lightsOutAtMs, Number.isFinite(c.loadedAtRaceMs) ? c.loadedAtRaceMs : r.lightsOutAtMs);
+        stalled = c.loaded ? raceMs - from >= this.cfg.startStallMs : raceMs - r.lightsOutAtMs >= this.cfg.lateJoinMs;
+      }
       else if (c.stale) c.stillSinceMs = Number.NaN;
       else {
         const p = c.state.progress;

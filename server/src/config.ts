@@ -15,8 +15,11 @@ export interface GameConfig {
   graceLobbyMs: number;
   graceLoadingMs: number;
   graceRaceMs: number;
-  /** LOADING ends when every human sent `loaded`, or after this (not loaded = DNF). */
+  /** LOADING ends when every human sent `loaded`, or after this. A player still connected but not loaded then joins late. */
   loadTimeoutMs: number;
+  /** A connected player that had not finished loading when the race started may still load and join for this long (from
+   *  lights out); after it, a car that never appeared on track is retired. */
+  lateJoinMs: number;
   /** T0 = all loaded + this (the client's 3-2-1). */
   countdownMs: number;
   /** Rules FINISH_WINDOW_MS. */
@@ -52,7 +55,9 @@ export const DEFAULT_GAME_CONFIG: Readonly<GameConfig> = {
   graceLobbyMs: 30_000,
   graceLoadingMs: 30_000,
   graceRaceMs: 60_000,
-  loadTimeoutMs: 30_000,
+  // A slow PC or a cold asset cache (the static site downloads the track first) can need well over 30 s.
+  loadTimeoutMs: 90_000,
+  lateJoinMs: 120_000,
   countdownMs: 3_000,
   finishWindowMs: 120_000,
   staleMs: 1_000,

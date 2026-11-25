@@ -31,6 +31,8 @@ export interface BotOptions {
   deviceId?: string;
   /** 'idle': loads but never sends a state (frozen tab); 'afk': sends states but nobody drives (car stays on the grid). */
   drive?: 'auto' | 'idle' | 'afk';
+  /** Slow PC (tests): handle the race `load` this much later, so `loaded` may arrive after the start. */
+  loadDelayMs?: number;
   /** D-064 tests: a ws-shaped socket over another transport (host-in-browser loopback) instead of `new WebSocket(url)`. */
   socket?: () => WebSocket;
 }
@@ -181,7 +183,14 @@ export class Bot {
     } else if (t === MSG_CONTACT_RELAY) this.contactsIn++;
   }
 
+  private loadDelayed = false;
+
   private onLoad(m: Load): void {
+    if (this.opts.loadDelayMs && !this.loadDelayed) {
+      this.loadDelayed = true;
+      setTimeout(() => this.onLoad(m), this.opts.loadDelayMs);
+      return;
+    }
     this.load = m;
     this.t0 = Number.NaN;
     const me = m.roster.find((r) => r.id === this.id);

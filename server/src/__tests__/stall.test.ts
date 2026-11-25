@@ -48,4 +48,21 @@ describe('stalled / absent cars at the start (no deadlock)', () => {
     expect(st.race.sc.count, JSON.stringify(rows)).toBe(0);
     expect(L).toBeGreaterThan(0);
   }, 90_000);
-});
+
+  it('a slow PC that finishes loading after the start joins late instead of being DNF', async () => {
+    const srv = await startServer({ countdownMs: 500, loadTimeoutMs: 2_000 });
+    const racer = await bot(srv, 'Racer');
+    const slow = await bot(srv, 'Slow', { loadDelayMs: 8_000 });
+    all.push({ srv, bots: [racer, slow] });
+    await startRace([racer, slow], { trackId: 'bosphorus', laps: 3, aiCount: 2 });
+    await sleep(8_000 + 20_000);
+    const room = [...srv.apex.hub.rooms.values()][0]!;
+    const r = room.race!;
+    const car = r.cars.find((c) => c.name === 'Slow')!;
+    const sc = r.sim!.car(car.index);
+    expect(car.timing.status, 'late loader must not be retired').toBe('running');
+    expect(car.loaded).toBe(true);
+    expect(Number.isFinite(car.loadedAtRaceMs)).toBe(true);
+    expect(sc.race.progress - car.gridProgress, 'late loader is racing').toBeGreaterThan(200);
+    expect(srv.logs.some((l) => l.event === 'lateJoin')).toBe(true);
+  }, 90_000);});
